@@ -3,6 +3,7 @@ import express from 'express';
 import { getLogger } from './logger';
 
 export default async ({ app }: { app: express.Application }) => {
+    // get local logger
     const logger = getLogger('ExpressLoader');
     logger.debug('Initialising express');
 

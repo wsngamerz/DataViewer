@@ -1,5 +1,6 @@
 import expressLoader from './express';
 import mongooseLoader from './mongoose';
+import agendaLoader from './agenda';
 import { getLogger } from './logger';
 
 export default async ({ expressApp }) => {
@@ -8,12 +9,13 @@ export default async ({ expressApp }) => {
     logger.debug('Loading started');
 
     // initialise mongoose and connect to database
-    const mongooseConnection = await mongooseLoader();
+    await mongooseLoader();
 
     // initialise express
     await expressLoader({ app: expressApp });
 
     // initialise agenda
+    await agendaLoader();
 
     logger.debug('Loading finished');
 };
