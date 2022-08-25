@@ -55,7 +55,7 @@ export const initialiseLogger = async () => {
 
     // Change the log level based on environment
     if (process.env.NODE_ENV !== 'production') {
-        logger.level = 'debug';
+        logger.level = 'silly';
     } else {
         logger.level = 'info';
     }
@@ -64,7 +64,7 @@ export const initialiseLogger = async () => {
 };
 
 // returns a logger with a custom label
-export const getLogger = (label = '<LABEL>') => {
+export const getLogger = (label = '') => {
     // set the lable to be displayed next to the log
     logger.defaultMeta = { label };
     return logger;
