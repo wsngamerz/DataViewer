@@ -7,17 +7,25 @@ on:
 
 jobs:
   main:
-    name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.6
-    with:
-      number-of-agents: 3
-      parallel-commands: |
-        npx nx-cloud record -- npx nx workspace-lint
-        npx nx-cloud record -- npx nx format:check
-      parallel-commands-on-agents: |
-        npx nx affected --target=lint --parallel=3
-        npx nx affected --target=test --parallel=3 --ci --code-coverage
-        npx nx affected --target=build --parallel=3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Nx Cloud - Main Job
+        uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.6
+        with:
+          number-of-agents: 3
+          parallel-commands: |
+            npx nx-cloud record -- npx nx workspace-lint
+            npx nx-cloud record -- npx nx format:check
+          parallel-commands-on-agents: |
+            npx nx affected --target=lint --parallel=3
+            npx nx affected --target=test --parallel=3 --ci --code-coverage
+            npx nx affected --target=build --parallel=3
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: |
+            dist
 
   agents:
     name: Nx Cloud - Agents
