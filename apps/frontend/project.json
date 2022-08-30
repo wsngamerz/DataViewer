@@ -15,11 +15,8 @@
                 "main": "apps/frontend/src/main.tsx",
                 "polyfills": "apps/frontend/src/polyfills.ts",
                 "tsConfig": "apps/frontend/tsconfig.app.json",
-                "assets": [
-                    "apps/frontend/src/favicon.ico",
-                    "apps/frontend/src/assets"
-                ],
-                "styles": ["apps/frontend/src/styles.css"],
+                "assets": ["apps/frontend/src/favicon.ico"],
+                "styles": ["apps/frontend/src/styles/styles.css"],
                 "scripts": [],
                 "webpackConfig": "@nrwl/react/plugins/webpack",
                 "postcssConfig": "apps/frontend/postcss.config.js"

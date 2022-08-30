@@ -1,6 +1,12 @@
 {
     "name": "data-viewer",
+    "repository": {
+        "url": "https://github.com/wsngamerz/DataViewer"
+    },
     "version": "0.0.0",
+    "author": {
+        "name": "William Neild"
+    },
     "license": "MIT",
     "scripts": {
         "nx": "nx",
