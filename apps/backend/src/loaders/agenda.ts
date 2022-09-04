@@ -1,11 +1,12 @@
 import { Agenda } from 'agenda';
 import mongoose from 'mongoose';
 
-import { getLogger } from './logger';
+import Logger from '../logger';
 
 export default async () => {
     // get local logger
-    const logger = getLogger('AgendaLoader');
+    const logger = new Logger('AgendaLoader');
+    const jobLogger = new Logger('AgendaJob');
     logger.debug('Initialising agenda');
 
     // load agenda and connect to mongodb using existing connection
@@ -17,15 +18,14 @@ export default async () => {
 
     // add event handlers
     agenda.on('success', (job) => {
-        logger.debug(`Job ${job.attrs.name} Complete`, { label: 'AgendaJob' });
+        jobLogger.debug(`Job ${job.attrs.name} Complete`);
     });
 
     agenda.on('fail', (err, job) => {
-        logger.error(
-            `Job ${job.attrs.name} failed with error: ${err.message}`,
-            { label: 'AgendaJob' }
+        jobLogger.error(
+            `Job ${job.attrs.name} failed with error: ${err.message}`
         );
-        logger.error(`${err.stack}`, { label: 'AgendaJob' });
+        jobLogger.error(`${err.stack}`);
     });
 
     // start the job processor

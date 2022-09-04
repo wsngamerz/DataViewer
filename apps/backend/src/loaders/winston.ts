@@ -63,9 +63,7 @@ export const initialiseLogger = async () => {
     logger.info(`Running in ${process.env.NODE_ENV}`, { label: 'Logger' });
 };
 
-// returns a logger with a custom label
-export const getLogger = (label = '') => {
-    // set the lable to be displayed next to the log
-    logger.defaultMeta = { label };
+// returns the logger
+export const getLogger = () => {
     return logger;
 };

@@ -1,46 +1,62 @@
 import { Router } from 'express';
-import passport from 'passport';
-import jwt from 'jsonwebtoken';
+
+import AuthService from '../services/auth';
 
 export default () => {
     const authRouter = Router();
 
     // routes
-    authRouter.post(
-        '/register',
-        passport.authenticate('register', { session: false }),
-        register
-    );
-
+    authRouter.post('/register', register);
     authRouter.post('/login', login);
 
     return authRouter;
 };
 
 // register route
-const register = (req, res) => res.json({ message: 'success', user: req.user });
+const register = async (req, res) => {
+    // get user info from the request body
+    const { username, password } = req.body;
+
+    // pass it though to the register authentication service
+    const user = await AuthService.register(username, password).catch(
+        (error: Error) => {
+            res.status(401).json({
+                message: 'User not registered',
+                reason: error.message,
+            });
+        }
+    );
+
+    if (!user) return;
+    res.json({ message: 'User successfully registered' });
+};
 
 // login route
-const login = (req, res, next) => {
-    passport.authenticate('login', async (err, user) => {
-        try {
-            if (err || !user) {
-                return next(err || new Error('An error occurred '));
-            }
+const login = async (req, res) => {
+    // get user info from request body
+    const { username, password } = req.body;
 
-            // login
-            req.login(user, { session: false }, async (error) => {
-                if (error) return next(error);
-
-                // create a jwt token containing the username and the user id and sign it
-                const body = { _id: user._id, username: user.username };
-                const token = jwt.sign({ user: body }, process.env.JWT_TOKEN);
-
-                // send the token to the user
-                return res.json({ token });
+    // pass it to the login authentication service
+    const user = await AuthService.login(username, password).catch(
+        (error: Error) => {
+            res.status(401).json({
+                message: 'Unable to Login',
+                reason: error.message,
             });
-        } catch (error) {
-            return next(error);
         }
-    })(req, res, next);
+    );
+
+    if (!user) return;
+
+    // generate a token and return it for the user
+    const token = await AuthService.generateJWT(
+        user._id,
+        user.username,
+        user.role
+    );
+
+    res.json({
+        message: 'User successfuly logged in',
+        token,
+    });
 };

@@ -1,12 +1,12 @@
 import express from 'express';
 import compression from 'compression';
 
-import { getLogger } from './logger';
+import Logger from '../logger';
 import apiRouter from '../api';
 
 export default async ({ app }: { app: express.Application }) => {
     // get local logger
-    const logger = getLogger('ExpressLoader');
+    const logger = new Logger('ExpressLoader');
     logger.debug('Initialising express');
 
     // add middlwares
@@ -38,8 +38,8 @@ export default async ({ app }: { app: express.Application }) => {
 };
 
 // custom logging middlware
+const reqLog = new Logger('Web');
 const requestLogger = (req, res, next) => {
-    const logger = getLogger();
-    logger.info(`request ${req.method} ${req.originalUrl}`, { label: 'Web' });
+    reqLog.http(`request ${req.method} ${req.originalUrl}`);
     next();
 };
