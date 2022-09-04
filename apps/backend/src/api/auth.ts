@@ -14,18 +14,13 @@ export default () => {
 
 // register route
 const register = async (req, res) => {
-    // get user info from the request body
-    const { username, password } = req.body;
-
     // pass it though to the register authentication service
-    const user = await AuthService.register(username, password).catch(
-        (error: Error) => {
-            res.status(401).json({
-                message: 'User not registered',
-                reason: error.message,
-            });
-        }
-    );
+    const user = await AuthService.register(req.body).catch((error: Error) => {
+        res.status(401).json({
+            message: 'User not registered',
+            reason: error.message,
+        });
+    });
 
     if (!user) return;
     res.json({ message: 'User successfully registered' });

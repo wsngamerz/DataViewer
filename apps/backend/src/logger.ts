@@ -28,7 +28,7 @@ export default class Logger {
     }
 
     http(message: string) {
-        this.log('error', message);
+        this.log('http', message);
     }
 
     verbose(message: string) {
