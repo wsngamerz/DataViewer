@@ -13,22 +13,29 @@ interface IPluginGeneratorSchema {
 }
 
 export default async function (tree: Tree, schema: IPluginGeneratorSchema) {
-    // get root of lib
-    const libraryRoot = readProjectConfiguration(tree, schema.name).root;
+    // ensure that the plugin starts with 'plugin-'
+    if (!schema.name.startsWith('plugin-')) {
+        schema.name = `plugin-${schema.name}`;
+    }
 
     // build ontop of the library generator
-    await libraryGenerator(tree, { name: schema.name });
+    await libraryGenerator(tree, {
+        name: schema.name,
+        buildable: true,
+        babelJest: false,
+    });
+
+    // get root of lib
+    const libraryRoot = readProjectConfiguration(tree, schema.name).root;
 
     // remove what we dont need
     tree.delete(joinPathFragments(libraryRoot, 'src/lib'));
 
     // add own files
-    generateFiles(
-        tree,
-        joinPathFragments(__dirname, './files'),
-        libraryRoot,
-        schema
-    );
+    generateFiles(tree, joinPathFragments(__dirname, './files'), libraryRoot, {
+        ...schema,
+        tmpl: '',
+    });
 
     // format files
     await formatFiles(tree);

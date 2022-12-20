@@ -1,10 +1,11 @@
 {
+    "name": "frontend",
     "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "apps/frontend/src",
     "projectType": "application",
     "targets": {
         "build": {
-            "executor": "@nrwl/web:webpack",
+            "executor": "@nrwl/webpack:webpack",
             "outputs": ["{options.outputPath}"],
             "defaultConfiguration": "production",
             "options": {
@@ -45,7 +46,7 @@
             }
         },
         "serve": {
-            "executor": "@nrwl/web:dev-server",
+            "executor": "@nrwl/webpack:dev-server",
             "defaultConfiguration": "development",
             "options": {
                 "buildTarget": "frontend:build",
@@ -70,7 +71,7 @@
         },
         "test": {
             "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/apps/frontend"],
+            "outputs": ["{workspaceRoot}/coverage/apps/frontend"],
             "options": {
                 "jestConfig": "apps/frontend/jest.config.ts",
                 "passWithNoTests": true
