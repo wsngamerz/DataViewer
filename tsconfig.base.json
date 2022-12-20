@@ -14,9 +14,7 @@
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
         "baseUrl": ".",
-        "paths": {
-            "@data-viewer/plugin-test": ["libs/plugin-test/src/index.ts"]
-        }
+        "paths": {}
     },
     "exclude": ["node_modules", "tmp"]
 }

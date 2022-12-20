@@ -4,7 +4,6 @@
     "projects": {
         "backend": "apps/backend",
         "frontend": "apps/frontend",
-        "frontend-e2e": "apps/frontend-e2e",
-        "plugin-test": "libs/plugin-test"
+        "frontend-e2e": "apps/frontend-e2e"
     }
 }

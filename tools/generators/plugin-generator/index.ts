@@ -5,6 +5,9 @@ import {
     generateFiles,
     joinPathFragments,
     readProjectConfiguration,
+    updateJson,
+    addProjectConfiguration,
+    updateProjectConfiguration,
 } from '@nrwl/devkit';
 import { libraryGenerator } from '@nrwl/workspace/generators';
 
@@ -26,15 +29,72 @@ export default async function (tree: Tree, schema: IPluginGeneratorSchema) {
     });
 
     // get root of lib
-    const libraryRoot = readProjectConfiguration(tree, schema.name).root;
+    const projectConfig = readProjectConfiguration(tree, schema.name);
+    const libraryRoot = projectConfig.root;
 
     // remove what we dont need
     tree.delete(joinPathFragments(libraryRoot, 'src/lib'));
+    tree.delete(joinPathFragments(libraryRoot, 'tsconfig.lib.json'));
 
     // add own files
     generateFiles(tree, joinPathFragments(__dirname, './files'), libraryRoot, {
         ...schema,
         tmpl: '',
+    });
+
+    // add our custom build targets
+    updateProjectConfiguration(tree, schema.name, {
+        ...projectConfig,
+        targets: {
+            ...projectConfig.targets,
+            build: {
+                executor: 'nx:run-commands',
+                options: {
+                    commands: [
+                        'nx run plugin-test:build-plugin',
+                        'nx run plugin-test:build-ui',
+                    ],
+                    parallel: false,
+                },
+            },
+            'build-plugin': {
+                executor: '@nrwl/js:tsc',
+                outputs: ['{options.outputPath}'],
+                options: {
+                    outputPath: joinPathFragments('dist/libs', schema.name),
+                    main: joinPathFragments(libraryRoot, 'src/index.ts'),
+                    tsConfig: joinPathFragments(
+                        libraryRoot,
+                        'tsconfig.plugin.json'
+                    ),
+                    assets: [joinPathFragments(libraryRoot, '*.md')],
+                },
+            },
+            'build-ui': {
+                executor: '@nrwl/rollup:rollup',
+                outputs: ['{options.outputPath}'],
+                options: {
+                    outputPath: joinPathFragments(
+                        'dist/libs',
+                        schema.name,
+                        'src/ui'
+                    ),
+                    tsConfig: joinPathFragments(
+                        libraryRoot,
+                        'tsconfig.ui.json'
+                    ),
+                    project: joinPathFragments(libraryRoot, 'package.json'),
+                    entryFile: joinPathFragments(
+                        libraryRoot,
+                        'src/ui/index.ts'
+                    ),
+                    external: ['react/jsx-runtime'],
+                    rollupConfig: '@nrwl/react/plugins/bundle-rollup',
+                    compiler: 'swc',
+                    assets: [],
+                },
+            },
+        },
     });
 
     // format files
