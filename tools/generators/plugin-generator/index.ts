@@ -13,11 +13,16 @@ interface IPluginGeneratorSchema {
 }
 
 export default async function (tree: Tree, schema: IPluginGeneratorSchema) {
-    // use base library generator
+    // get root of lib
+    const libraryRoot = readProjectConfiguration(tree, schema.name).root;
+
+    // build ontop of the library generator
     await libraryGenerator(tree, { name: schema.name });
 
+    // remove what we dont need
+    tree.delete(joinPathFragments(libraryRoot, 'src/lib'));
+
     // add own files
-    const libraryRoot = readProjectConfiguration(tree, schema.name).root;
     generateFiles(
         tree,
         joinPathFragments(__dirname, './files'),
@@ -25,7 +30,10 @@ export default async function (tree: Tree, schema: IPluginGeneratorSchema) {
         schema
     );
 
+    // format files
     await formatFiles(tree);
+
+    // install packages
     return () => {
         installPackagesTask(tree);
     };

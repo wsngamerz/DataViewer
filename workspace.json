@@ -4,8 +4,6 @@
     "projects": {
         "backend": "apps/backend",
         "frontend": "apps/frontend",
-        "frontend-e2e": "apps/frontend-e2e",
-        "plugin-facebook-backend": "libs/plugin-facebook-backend",
-        "plugin-facebook-ui": "libs/plugin-facebook-ui"
+        "frontend-e2e": "apps/frontend-e2e"
     }
 }

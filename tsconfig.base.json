@@ -14,14 +14,7 @@
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
         "baseUrl": ".",
-        "paths": {
-            "@data-viewer/plugin-facebook-backend": [
-                "libs/plugin-facebook-backend/src/index.ts"
-            ],
-            "@data-viewer/plugin-facebook-ui": [
-                "libs/plugin-facebook-ui/src/index.ts"
-            ]
-        }
+        "paths": {}
     },
     "exclude": ["node_modules", "tmp"]
 }
