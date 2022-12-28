@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import Joi from 'joi';
 
 import Logger from '../logger';
-import User from '../models/user';
+import User from '../models/User';
 
 export default class AuthService {
     /**
