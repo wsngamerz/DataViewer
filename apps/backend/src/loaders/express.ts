@@ -6,8 +6,8 @@ import apiRouter from '../api';
 
 export default async ({ app }: { app: express.Application }) => {
     // get local logger
-    const logger = new Logger('ExpressLoader');
-    const webLogger = new Logger('Web');
+    const logger = Logger.getLogger('ExpressLoader');
+    const webLogger = Logger.getLogger('Web');
     logger.debug('Initialising express');
 
     // add middlwares

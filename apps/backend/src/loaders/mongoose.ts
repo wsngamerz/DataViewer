@@ -4,7 +4,7 @@ import Logger from '../logger';
 
 export default async () => {
     // get local logger
-    const logger = new Logger('MongooseLoader');
+    const logger = Logger.getLogger('MongooseLoader');
     logger.debug('Initialising mongoose');
 
     // connect to database

@@ -64,6 +64,6 @@ export const initialiseLogger = async () => {
 };
 
 // returns the logger
-export const getLogger = () => {
+export const getWinstonLogger = () => {
     return logger;
 };

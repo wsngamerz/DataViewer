@@ -5,7 +5,7 @@ import agendaLoader from './agenda';
 
 export default async ({ expressApp }) => {
     // get local logger
-    const logger = new Logger('Loaders');
+    const logger = Logger.getLogger('Loaders');
     logger.debug('Loading started');
 
     // initialise key sections of the system

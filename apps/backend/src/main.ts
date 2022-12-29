@@ -7,7 +7,7 @@ import Logger from './logger';
 async function startServer() {
     // initialise the logger and create one for the server
     await initialiseLogger();
-    const logger = new Logger('Server');
+    const logger = Logger.getLogger();
     logger.info('Starting DataViewer');
 
     // create express application
