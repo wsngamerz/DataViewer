@@ -1,0 +1,19 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../../dist/out-tsc",
+        "types": ["node"],
+        "jsx": "react-jsx"
+    },
+    "files": [
+        "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
+        "../../node_modules/@nrwl/react/typings/image.d.ts"
+    ],
+    "exclude": [],
+    "include": [
+        "src/ui/**/*.js",
+        "src/ui/**/*.jsx",
+        "src/ui/**/*.ts",
+        "src/ui/**/*.tsx"
+    ]
+}

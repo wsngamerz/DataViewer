@@ -1,0 +1,10 @@
+import { PluginBase } from '@data-viewer/shared/plugin-api';
+
+export default class <%= mainClass %> extends PluginBase {
+    name = '<%= name %>';
+    displayName = '<%= displayName %>';
+    version = '0.0.0';
+
+    onPluginEnable() {}
+    onPluginDisable() {}
+}

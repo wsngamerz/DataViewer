@@ -2,12 +2,12 @@ import express from 'express';
 
 import loaders from './loaders';
 import { initialiseLogger } from './loaders/winston';
-import Logger from './logger';
+import Logger from '@data-viewer/shared/logger';
 
 async function startServer() {
     // initialise the logger and create one for the server
     await initialiseLogger();
-    const logger = new Logger('Server');
+    const logger = Logger.getLogger();
     logger.info('Starting DataViewer');
 
     // create express application

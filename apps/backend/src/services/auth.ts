@@ -2,10 +2,12 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import Joi from 'joi';
 
-import Logger from '../logger';
-import User from '../models/user';
+import Logger from '@data-viewer/shared/logger';
+import User from '../models/User';
 
 export default class AuthService {
+    private static logger: Logger = Logger.getLogger('AuthService');
+
     /**
      * Register a new user
      *
@@ -16,9 +18,7 @@ export default class AuthService {
      * @memberof AuthService
      */
     public static async register(userDTO) {
-        // get a logger
-        const logger = new Logger('AuthService/register');
-        logger.silly('User being registered');
+        this.logger.silly('User being registered');
 
         // validate the input
         let userValid = false;
@@ -26,9 +26,9 @@ export default class AuthService {
         try {
             userValid = this.validateUserDTO(userDTO);
         } catch (error) {
-            logger.warn('User failed validation');
+            this.logger.warn('User failed validation');
             issues = error.details.map((d) => d.message);
-            logger.silly(`Rules failed:\n${issues.join('\n')}`);
+            this.logger.silly(`Rules failed:\n${issues.join('\n')}`);
         }
 
         // if invalid, return an error with the failed rules
@@ -38,10 +38,10 @@ export default class AuthService {
         // check if username exists in db
         const userExist = await User.findOne({ username: userDTO.username });
         if (userExist) {
-            logger.warn(
+            this.logger.warn(
                 `User registration with existing username: ${userDTO.username}`
             );
-            logger.silly(JSON.stringify(userExist));
+            this.logger.silly(JSON.stringify(userExist));
             throw new Error('User already exists');
         }
 
@@ -53,11 +53,11 @@ export default class AuthService {
             username: userDTO.username,
             password: hashedPassword,
         }).catch((error) => {
-            logger.warn(`Error adding user to database: ${error}`);
+            this.logger.warn(`Error adding user to database: ${error}`);
         });
 
         if (!user) return;
-        logger.silly('User Registered');
+        this.logger.silly('User Registered');
 
         return user;
     }
@@ -73,20 +73,19 @@ export default class AuthService {
      * @memberof AuthService
      */
     public static async login(username: string, password: string) {
-        const logger = new Logger('AuthService/login');
-        logger.silly(`User '${username}' logging in`);
+        this.logger.silly(`User '${username}' logging in`);
 
         // check if the user exists first
         const user = await User.findOne({ username });
         if (!user) {
-            logger.warn(`User '${username}' doesn't exist`);
+            this.logger.warn(`User '${username}' doesn't exist`);
             throw new Error('No user found with that username');
         }
 
         // verify valid password
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            logger.warn(
+            this.logger.warn(
                 `User '${username}' attempted login with incorrect password`
             );
             throw new Error('Invalid password for user');
@@ -96,8 +95,7 @@ export default class AuthService {
     }
 
     public static async generateJWT(id, username, role) {
-        const logger = new Logger('AuthService/generateJWT');
-        logger.silly(`Generating JWT for ${username}`);
+        this.logger.silly(`Generating JWT for ${username}`);
 
         // token content
         const tokenPayload = { id, username, role };

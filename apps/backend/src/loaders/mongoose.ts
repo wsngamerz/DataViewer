@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
-import Logger from '../logger';
+import Logger from '@data-viewer/shared/logger';
 
 export default async () => {
     // get local logger
-    const logger = new Logger('MongooseLoader');
+    const logger = Logger.getLogger('MongooseLoader');
     logger.debug('Initialising mongoose');
 
     // connect to database

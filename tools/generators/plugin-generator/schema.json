@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "cli": "nx",
+    "$id": "plugin-generator",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "The internal name of the plugin (e.g. 'plugin-example')",
+            "$default": {
+                "$source": "argv",
+                "index": 0
+            }
+        },
+        "displayName": {
+            "type": "string",
+            "description": "The display name of the plugin (e.g. 'Example plugin')" 
+        },
+        "mainClass": {
+            "type": "string",
+            "description": "Main plugin class name (e.g. 'ExamplePlugin')"
+        }
+    },
+    "required": ["name", "displayName", "mainClass"]
+}

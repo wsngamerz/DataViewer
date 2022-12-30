@@ -1,42 +1,43 @@
 name: CI
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+    push:
+        branches:
+            - main
+            - 'feature/*'
+    pull_request:
 
 jobs:
-  main:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout branch
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+    main:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout branch
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
 
-    - name: Cache `.npm` directory for faster future builds
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.npm
-        key: ${{ runner.os }}-npm--${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-npm-
-          ${{ runner.os }}-
+            - name: Cache `.npm` directory for faster future builds
+              uses: actions/cache@v2
+              with:
+                  path: |
+                      ~/.npm
+                  key: ${{ runner.os }}-npm--${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-npm-
+                      ${{ runner.os }}-
 
-    - name: Run `npm ci` to get guaranteed dependency versions using package-lock
-      run: npm ci
-    
-    - name: Nx CI & Build
-      uses: MansaGroup/nrwl-nx-action@v2
-      with:
-        targets: lint,test,build
-        all: 'true'
-        parallel: 'true'
-        nxCloud: 'true'
+            - name: Run `npm ci` to get guaranteed dependency versions using package-lock
+              run: npm ci
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: build
-        path: dist/
+            - name: Nx CI & Build
+              uses: MansaGroup/nrwl-nx-action@v2
+              with:
+                  targets: lint,test,build
+                  all: 'true'
+                  parallel: 'true'
+                  nxCloud: 'true'
+
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: build
+                  path: dist/

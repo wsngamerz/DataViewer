@@ -1,12 +1,12 @@
 import { Agenda } from 'agenda';
 import mongoose from 'mongoose';
 
-import Logger from '../logger';
+import Logger from '@data-viewer/shared/logger';
 
 export default async () => {
     // get local logger
-    const logger = new Logger('AgendaLoader');
-    const jobLogger = new Logger('AgendaJob');
+    const logger = Logger.getLogger('AgendaLoader');
+    const jobLogger = Logger.getLogger('AgendaJob');
     logger.debug('Initialising agenda');
 
     // load agenda and connect to mongodb using existing connection
@@ -22,9 +22,7 @@ export default async () => {
     });
 
     agenda.on('fail', (err, job) => {
-        jobLogger.error(
-            `Job ${job.attrs.name} failed with error: ${err.message}`
-        );
+        jobLogger.error(`Job ${job.attrs.name} failed. Error: ${err.message}`);
         jobLogger.error(`${err.stack}`);
     });
 
