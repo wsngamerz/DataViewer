@@ -81,9 +81,9 @@ export class EventManager {
      * @param handler the handler to remove from the event
      * @returns EventManager
      */
-    public removeListener(
-        eventClass: IEventConstructor,
-        handler: EventHandler
+    public removeListener<T>(
+        eventClass: IEventConstructor<T>,
+        handler: EventHandler<T>
     ): EventManager {
         // get listeners for the event
         let listeners = this.getListeners(eventClass);
@@ -96,6 +96,11 @@ export class EventManager {
         listeners = listeners.filter((l) => l !== handler);
         this.listeners.set(eventClass, listeners);
 
+        return this;
+    }
+
+    public removeAllListeners(): EventManager {
+        this.listeners.clear();
         return this;
     }
 }

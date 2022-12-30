@@ -1,5 +1,4 @@
-import { EventManager } from '../../events/EventManager';
-import { Event } from '../../events/Event';
+import { EventManager, Event } from '../../src/index';
 
 describe('EventManager', () => {
     it('should work properly', (done) => {

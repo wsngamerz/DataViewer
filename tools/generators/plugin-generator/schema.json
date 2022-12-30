@@ -6,12 +6,16 @@
     "properties": {
         "name": {
             "type": "string",
-            "description": "Plugin name",
+            "description": "The internal name of the plugin (e.g. 'plugin-example')",
             "$default": {
                 "$source": "argv",
                 "index": 0
             }
+        },
+        "displayName": {
+            "type": "string",
+            "description": "The display name of the plugin (e.g. 'Example plugin')" 
         }
     },
-    "required": ["name"]
+    "required": ["name", "displayName"]
 }

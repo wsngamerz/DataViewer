@@ -13,6 +13,7 @@ import { libraryGenerator } from '@nrwl/workspace/generators';
 
 interface IPluginGeneratorSchema {
     name: string;
+    displayName: string;
 }
 
 export default async function (tree: Tree, schema: IPluginGeneratorSchema) {
@@ -40,6 +41,8 @@ export default async function (tree: Tree, schema: IPluginGeneratorSchema) {
     generateFiles(tree, joinPathFragments(__dirname, './files'), libraryRoot, {
         ...schema,
         tmpl: '',
+        pluginName: schema.name,
+        pluginDisplayName: schema.displayName,
     });
 
     // add our custom build targets
