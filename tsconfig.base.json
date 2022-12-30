@@ -15,6 +15,7 @@
         "skipDefaultLibCheck": true,
         "baseUrl": ".",
         "paths": {
+            "@data-viewer/shared/logger": ["libs/shared/logger/src/index.ts"],
             "@data-viewer/shared/plugin-api": [
                 "libs/shared/plugin-api/src/index.ts"
             ]

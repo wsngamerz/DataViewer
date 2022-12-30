@@ -1,3 +1,5 @@
+import Logger from '@data-viewer/shared/logger';
+
 import { EventManager, PluginDisableEvent, PluginEnableEvent } from '../events';
 
 export interface Plugin {
@@ -34,7 +36,7 @@ export interface Plugin {
 }
 
 export interface IPluginBase {
-    new (eventManager: EventManager, logger: unknown): PluginBase;
+    new (eventManager: EventManager): PluginBase;
 }
 
 export abstract class PluginBase implements Plugin {
@@ -43,12 +45,12 @@ export abstract class PluginBase implements Plugin {
     version: string;
     enabled: boolean;
 
-    private logger;
+    private logger: Logger;
     private eventManager: EventManager;
 
-    constructor(eventManager: EventManager, logger: unknown) {
+    constructor(eventManager: EventManager) {
         this.eventManager = eventManager;
-        this.logger = logger;
+        this.logger = Logger.getLogger(this.name);
 
         // add event listeners
         if (this.onPluginEnable) {

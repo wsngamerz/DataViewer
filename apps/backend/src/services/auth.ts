@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import Joi from 'joi';
 
-import Logger from '../logger';
+import Logger from '@data-viewer/shared/logger';
 import User from '../models/User';
 
 export default class AuthService {

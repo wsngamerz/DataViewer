@@ -5,6 +5,7 @@
         "backend": "apps/backend",
         "frontend": "apps/frontend",
         "frontend-e2e": "apps/frontend-e2e",
+        "shared-logger": "libs/shared/logger",
         "shared-plugin-api": "libs/shared/plugin-api"
     }
 }

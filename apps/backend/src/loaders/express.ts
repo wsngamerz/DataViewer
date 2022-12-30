@@ -1,7 +1,7 @@
 import express from 'express';
 import compression from 'compression';
 
-import Logger from '../logger';
+import Logger from '@data-viewer/shared/logger';
 import apiRouter from '../api';
 
 export default async ({ app }: { app: express.Application }) => {

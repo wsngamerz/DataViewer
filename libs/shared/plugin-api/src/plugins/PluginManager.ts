@@ -1,3 +1,4 @@
+import Logger from '@data-viewer/shared/logger';
 import { EventManager, PluginDisableEvent, PluginEnableEvent } from '../events';
 import { PluginBase, IPluginBase } from './Plugin';
 
@@ -18,7 +19,7 @@ export class PluginManager {
      */
     loadPlugin(PluginClass: IPluginBase) {
         // create the plugin
-        const plugin = new PluginClass(this.eventManager, null);
+        const plugin = new PluginClass(this.eventManager);
 
         // add plugin to list
         if (!this.plugins.has(plugin.name)) {

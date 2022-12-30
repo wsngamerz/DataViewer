@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import Logger from '../logger';
+import Logger from '@data-viewer/shared/logger';
 
 export default async () => {
     // get local logger

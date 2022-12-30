@@ -1,15 +1,13 @@
 import path from 'path';
-import { PathLike } from 'fs';
 import fs from 'fs/promises';
 import winston from 'winston';
 
-let logger: winston.Logger;
-let logPath: PathLike;
+import Logger from '@data-viewer/shared/logger';
 
 // setup the logger
 export const initialiseLogger = async () => {
     // create logs dir if not exists before logging
-    logPath = path.normalize(path.join(__dirname, 'logs'));
+    const logPath = path.normalize(path.join(__dirname, 'logs'));
     await fs.mkdir(logPath, { recursive: true });
 
     // setup the formatting
@@ -26,7 +24,7 @@ export const initialiseLogger = async () => {
     );
 
     // create the logger
-    logger = winston.createLogger({
+    const logger = winston.createLogger({
         level: 'info',
         format: logFormat,
         transports: [
@@ -60,10 +58,7 @@ export const initialiseLogger = async () => {
         logger.level = 'info';
     }
 
-    logger.info(`Running in ${process.env.NODE_ENV}`, { label: 'Logger' });
-};
-
-// returns the logger
-export const getWinstonLogger = () => {
-    return logger;
+    // apply to logger
+    Logger.setWinstonLogger(logger);
+    Logger.getLogger().info(`Running in ${process.env.NODE_ENV}`);
 };

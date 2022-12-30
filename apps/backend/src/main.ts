@@ -2,7 +2,7 @@ import express from 'express';
 
 import loaders from './loaders';
 import { initialiseLogger } from './loaders/winston';
-import Logger from './logger';
+import Logger from '@data-viewer/shared/logger';
 
 async function startServer() {
     // initialise the logger and create one for the server

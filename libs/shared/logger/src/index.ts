@@ -1,7 +1,5 @@
 import winston from 'winston';
 
-import { getWinstonLogger } from './loaders/winston';
-
 export default class Logger {
     /**
      * The label that will be displayed next to each log sent by this instance
@@ -41,14 +39,19 @@ export default class Logger {
     }
 
     /**
+     * Set the winston logger
+     * @param logger the logger
+     */
+    public static setWinstonLogger(logger: winston.Logger) {
+        Logger.logger = logger;
+    }
+
+    /**
      * Gets a logger with a label. If one doesn't exist, it will create a new one
      * @param label the logger label
      * @returns a logger with a label
      */
     public static getLogger(label = 'DataViewer'): Logger {
-        // if winston logger does not exist, get it
-        if (!Logger.logger) Logger.logger = getWinstonLogger();
-
         // if alternative instances map doesn't exist, create it
         if (!Logger.logInstances)
             Logger.logInstances = new Map<string, Logger>();
@@ -63,6 +66,12 @@ export default class Logger {
     }
 
     log(level: string, message: string) {
+        // if the winston logger has not been applied, fallback to console.log
+        if (!Logger.logger) {
+            console.log(`[${this.label}] ${level}: ${message}`);
+            return;
+        }
+
         Logger.logger.log(level, message, { label: this.label });
     }
 
