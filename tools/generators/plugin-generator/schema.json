@@ -15,7 +15,11 @@
         "displayName": {
             "type": "string",
             "description": "The display name of the plugin (e.g. 'Example plugin')" 
+        },
+        "mainClass": {
+            "type": "string",
+            "description": "Main plugin class name (e.g. 'ExamplePlugin')"
         }
     },
-    "required": ["name", "displayName"]
+    "required": ["name", "displayName", "mainClass"]
 }

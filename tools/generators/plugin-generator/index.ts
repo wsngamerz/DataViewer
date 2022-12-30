@@ -5,8 +5,6 @@ import {
     generateFiles,
     joinPathFragments,
     readProjectConfiguration,
-    updateJson,
-    addProjectConfiguration,
     updateProjectConfiguration,
 } from '@nrwl/devkit';
 import { libraryGenerator } from '@nrwl/workspace/generators';
@@ -14,6 +12,7 @@ import { libraryGenerator } from '@nrwl/workspace/generators';
 interface IPluginGeneratorSchema {
     name: string;
     displayName: string;
+    mainClass: string;
 }
 
 export default async function (tree: Tree, schema: IPluginGeneratorSchema) {
@@ -27,10 +26,12 @@ export default async function (tree: Tree, schema: IPluginGeneratorSchema) {
         name: schema.name,
         buildable: true,
         babelJest: false,
+        directory: `libs/plugins`,
     });
 
     // get root of lib
-    const projectConfig = readProjectConfiguration(tree, schema.name);
+    const projectName = `plugins-${schema.name}`;
+    const projectConfig = readProjectConfiguration(tree, projectName);
     const libraryRoot = projectConfig.root;
 
     // remove what we dont need
@@ -43,10 +44,11 @@ export default async function (tree: Tree, schema: IPluginGeneratorSchema) {
         tmpl: '',
         pluginName: schema.name,
         pluginDisplayName: schema.displayName,
+        mainClass: schema.mainClass,
     });
 
     // add our custom build targets
-    updateProjectConfiguration(tree, schema.name, {
+    updateProjectConfiguration(tree, projectName, {
         ...projectConfig,
         targets: {
             ...projectConfig.targets,
