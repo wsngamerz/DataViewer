@@ -4,6 +4,7 @@ const { join } = require('path');
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: [
+        'node_modules/preline/dist/*.js',
         join(
             __dirname,
             '{src,pages,components}/**/*!(*.stories|*.spec).{ts,tsx,html}'
@@ -15,5 +16,6 @@ module.exports = {
     },
     plugins: [
         require('@tailwindcss/forms'),
+        require("preline/plugin")
     ],
 };

@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import Footer from '../components/Footer';
 import Navigation from '../components/Navigation';
 
@@ -48,9 +50,11 @@ export default function Login() {
                             />
                         </div>
 
-                        <button className="block w-full mt-2 rounded-md border border-transparent bg-emerald-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-600">
-                            Login
-                        </button>
+                        <Link to="/app">
+                            <button className="block w-full mt-2 rounded-md border border-transparent bg-emerald-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-600">
+                                Login
+                            </button>
+                        </Link>
                     </form>
                 </div>
             </section>

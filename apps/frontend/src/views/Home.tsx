@@ -1,4 +1,5 @@
 import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
 
 import { ReactComponent as GoogleLogo } from '../assets/Google_Logo.svg';
 import { ReactComponent as FacebookLogo } from '../assets/Facebook_Logo.svg';
@@ -7,7 +8,6 @@ import { ReactComponent as DiscordLogo } from '../assets/Discord_Logo.svg';
 import { ReactComponent as SkypeLogo } from '../assets/Skype_Logo.svg';
 import { ReactComponent as AmazonLogo } from '../assets/Amazon_Logo.svg';
 import { ReactComponent as SpotifyLogo } from '../assets/Spotify_Logo.svg';
-import Footer from '../components/Footer';
 
 export default function Home() {
     return (
@@ -53,7 +53,9 @@ export default function Home() {
                         { name: 'Spotify', icon: SpotifyLogo },
                         { name: 'Many more...', icon: '' },
                     ].map((service) => (
-                        <div className="p-4 text-center bg-white rounded-md flex flex-col items-center drop-shadow-sm">
+                        <div
+                            key={service.name}
+                            className="p-4 text-center bg-white rounded-md flex flex-col items-center drop-shadow-sm">
                             {service.icon && (
                                 <service.icon width={96} height={96} />
                             )}
