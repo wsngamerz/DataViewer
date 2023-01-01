@@ -54,7 +54,8 @@
             },
             "configurations": {
                 "development": {
-                    "buildTarget": "frontend:build:development"
+                    "buildTarget": "frontend:build:development",
+                    "host": "0.0.0.0"
                 },
                 "production": {
                     "buildTarget": "frontend:build:production",

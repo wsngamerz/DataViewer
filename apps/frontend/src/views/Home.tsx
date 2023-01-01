@@ -1,48 +1,75 @@
-import { Link } from 'react-router-dom';
+import Navigation from '../components/Navigation';
+
+import { ReactComponent as GoogleLogo } from '../assets/Google_Logo.svg';
+import { ReactComponent as FacebookLogo } from '../assets/Facebook_Logo.svg';
+import { ReactComponent as InstagramLogo } from '../assets/Instagram_Logo.svg';
+import { ReactComponent as DiscordLogo } from '../assets/Discord_Logo.svg';
+import { ReactComponent as SkypeLogo } from '../assets/Skype_Logo.svg';
+import { ReactComponent as AmazonLogo } from '../assets/Amazon_Logo.svg';
+import { ReactComponent as SpotifyLogo } from '../assets/Spotify_Logo.svg';
+import Footer from '../components/Footer';
 
 export default function Home() {
     return (
         <>
-            <section className="w-full px-3 bg-indigo-700 lg:px-6">
+            <section className="w-full px-3 bg-emerald-500 lg:px-6">
                 <div className="mx-auto max-w-7xl">
-                    {/* Navigation */}
-                    <nav className="flex items-center w-full h-24 select-none relative flex-wrap justify-between mx-auto font-medium">
-                        <Link to="/" className="w-1/4 pl-6 pr-4">
-                            <span className="p-1 text-xl font-black leading-none text-white select-none">
-                                <span className="">DataViewer</span>
-                                <span className="text-indigo-300">.</span>
-                            </span>
-                        </Link>
-
-                        <div className="text-sm lg:text-base w-3/4 bg-transparent p-0 relative flex h-full select-none rounded-none flex-row overflow-auto">
-                            <div className="flex items-center justify-end w-full h-full flex-row py-0">
-                                <Link
-                                    to="/login"
-                                    className="text-indigo-200 hover:text-white pl-0 mr-3 lg:mr-5 w-auto">
-                                    Login
-                                </Link>
-                                <Link
-                                    to="/register"
-                                    className="inline-flex items-center justify-center px-4 py-2 mr-1 text-base font-medium leading-6 text-indigo-600 bg-white rounded-full">
-                                    Register
-                                </Link>
-                            </div>
-                        </div>
-                    </nav>
+                    <Navigation />
 
                     {/* Hero Heading */}
                     <div className="container py-32 mx-auto text-center sm:px-4">
-                        <h1 className="text-4xl font-extrabold leading-10 tracking-tight text-white sm:text-5xl sm:leading-none md:text-6xl xl:text-7xl lg:m-0">
+                        <h1 className="text-6xl font-extrabold leading-10 tracking-tight text-white sm:leading-none md:text-8xl lg:m-0">
                             DataViewer
                         </h1>
-                        <div className="my-8 max-w-lg mx-auto text-sm text-center text-indigo-200 sm:text-base md:max-w-xl md:text-lg xl:text-xl">
+                        <div className="my-8 max-w-lg mx-auto text-lg text-center text-emerald-100 sm:text-xl md:max-w-xl xl:text-2xl">
                             A powerful software solution for visualising data
                             exports from popular 3rd party services.
                         </div>
                     </div>
                 </div>
             </section>
-            <section></section>
+
+            {/* Services section */}
+            <section className="container mx-auto py-8 text-center">
+                <div className="my-8">
+                    <h2 className="text-xl font-extrabold leading-10 tracking-tight sm:text-2xl sm:leading-none md:text-3xl xl:text-4xl">
+                        Import From Your Favourite Services.
+                    </h2>
+                    <span className="font-lighter text-gray-700">
+                        We've built integrations with some of your favourite
+                        services. Check them out below
+                    </span>
+                </div>
+
+                {/* Grid of some supported services */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mx-4 sm:mx-8 md:mx-16 lg:mx-24 xl:mx-36 mb-8">
+                    {[
+                        { name: 'Google', icon: GoogleLogo },
+                        { name: 'Facebook', icon: FacebookLogo },
+                        { name: 'Instagram', icon: InstagramLogo },
+                        { name: 'Discord', icon: DiscordLogo },
+                        { name: 'Skype', icon: SkypeLogo },
+                        { name: 'Amazon', icon: AmazonLogo },
+                        { name: 'Spotify', icon: SpotifyLogo },
+                        { name: 'Many more...', icon: '' },
+                    ].map((service) => (
+                        <div className="p-4 text-center bg-white rounded-md flex flex-col items-center drop-shadow-sm">
+                            {service.icon && (
+                                <service.icon width={96} height={96} />
+                            )}
+                            <span className="font-bold mt-2">
+                                {service.name}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+
+                <button className="border border-emerald-500 bg-emerald-500 text-white rounded-md px-8 py-2 m-2 hover:bg-emerald-600">
+                    View All Integrations
+                </button>
+            </section>
+
+            <Footer />
         </>
     );
 }
