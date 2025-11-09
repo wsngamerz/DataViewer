@@ -32,7 +32,7 @@ get-test-deps: ## Install test dependencies
 version: ## Print version
 	@echo $(VERSION)
 
-build: build-app swag ## Builds the application and regenerates the swagger
+build: build-app
 
 build-app: $(GO_DEPENDENCIES) ## Build API binary for current OS
 	CGO_ENABLED=$(CGO_ENABLED) $(GO) $(BUILD_TARGET) $(BUILDFLAGS) -o build/$(BINARY_NAME) $(MAIN_SRC_FILE)
@@ -71,31 +71,10 @@ lint: ## Lints the code with golangci-lint
 .PHONY: all
 all: fmt build test lint
 
-bin/docs:
-	go build $(LDFLAGS) -v -o bin/docs cmd/docs/*.go
-
-.PHONY: docs
-docs: bin/docs ## update docs
-	@echo "Generating docs"
-	@./bin/docs --target=./docs/cmd
-	@./bin/docs --target=./docs/man/man1 --kind=man
-	@rm -f ./bin/docs
-
 .PHONY: mocks
 mocks:  ## Generates mock implementations from interfaces
 	mockery
 
-SWAG_BINARY := $(GOPATH)/bin/swag
-$(SWAG_BINARY):
-	$(GO) install github.com/swaggo/swag/cmd/swag@$(shell grep github.com/swaggo/swag go.mod | cut -d' ' -f2)
-
-swag: $(SWAG_BINARY) set-swag-version ## Generate swagger documentation
-	$(SWAG_BINARY) init -g cmd/api/main.go
-	$(SWAG_BINARY) fmt
-
-set-swag-version: ## Sets the version of the app in main.go for swagger generation
-	sed -i 's/@version .*/@version $(VERSION)/' ./cmd/api/main.go
-
 .PHONY: run
-run: mocks lint swag build ## Run the application
+run: mocks lint build ## Run the application
 	./build/$(BINARY_NAME)

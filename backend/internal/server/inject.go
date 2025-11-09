@@ -6,7 +6,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	_ "github.com/wsngamerz/dataviewer/docs"
 	"github.com/wsngamerz/dataviewer/internal/config"
 	"github.com/wsngamerz/dataviewer/internal/facebook"
 	"github.com/wsngamerz/dataviewer/internal/health"
