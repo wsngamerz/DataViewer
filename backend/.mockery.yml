@@ -1,0 +1,14 @@
+all: false
+dir: '{{.InterfaceDir}}/mocks'
+filename: '{{.InterfaceName | lower}}.go'
+force-file-write: true
+formatter: goimports
+log-level: info
+template: testify
+structname: Mock{{.InterfaceName}}
+pkgname: mocks
+recursive: false
+packages:
+  github.com/wsngamerz/dataviewer/internal/domain:
+    config:
+      all: true

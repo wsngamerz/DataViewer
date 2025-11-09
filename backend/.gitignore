@@ -1,0 +1,9 @@
+.idea
+build
+config.yaml
+
+## Test Directories
+product-test-*/
+
+## Spreadsheet Reports
+*.xlsx

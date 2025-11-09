@@ -1,0 +1,28 @@
+info:
+  contact: {}
+  description: Dataviewer is a powerful data visualization and analytics platform
+    designed to help users make sense of their own data through interactive charts,
+    graphs, and dashboards.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: dataviewer API
+  version: 0.0.1-dev
+paths:
+  /health:
+    get:
+      description: get the health of the dependencies of the service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Gets the health of the service
+      tags:
+      - Health
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

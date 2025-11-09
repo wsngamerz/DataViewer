@@ -1,0 +1,8 @@
+service:
+  logLevel: debug
+  port: 8080
+
+mongo:
+    connectionString: mongodb://root:root@localhost:27017
+    databaseName: dataviewer
+    facebookImportsCollection: facebook_imports
