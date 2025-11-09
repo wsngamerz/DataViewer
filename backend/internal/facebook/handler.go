@@ -20,6 +20,10 @@ func NewHandler(g *huma.Group, fuc domain.FacebookUseCase) {
 
 	huma.Get(g, "/imports", h.getImports)
 	huma.Post(g, "/imports", h.createImport)
+
+	huma.Get(g, "/accounts", h.getAccounts)
+	huma.Get(g, "/chats", h.getChats)
+	huma.Get(g, "/messages", h.getMessages)
 }
 
 type GetImportsResponse struct {
@@ -67,5 +71,59 @@ func (h *handler) createImport(ctx context.Context, input *CreateImportRequest) 
 
 	response := &CreateImportResponse{}
 	response.Body.Import = createdImport
+	return response, nil
+}
+
+type GetAccountsResponse struct {
+	Body struct {
+		Accounts []dtos.AccountDTO `json:"accounts"`
+	}
+}
+
+func (h *handler) getAccounts(ctx context.Context, _ *struct{}) (*GetAccountsResponse, error) {
+	accounts, err := h.facebookUseCase.GetAccounts(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting facebook accounts")
+		return nil, err
+	}
+
+	response := &GetAccountsResponse{}
+	response.Body.Accounts = accounts
+	return response, nil
+}
+
+type GetChatsResponse struct {
+	Body struct {
+		Chats []dtos.ChatDTO `json:"chats"`
+	}
+}
+
+func (h *handler) getChats(ctx context.Context, _ *struct{}) (*GetChatsResponse, error) {
+	chats, err := h.facebookUseCase.GetChats(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting facebook chats")
+		return nil, err
+	}
+
+	response := &GetChatsResponse{}
+	response.Body.Chats = chats
+	return response, nil
+}
+
+type GetMessagesResponse struct {
+	Body struct {
+		Messages []dtos.MessageDTO `json:"messages"`
+	}
+}
+
+func (h *handler) getMessages(ctx context.Context, _ *struct{}) (*GetMessagesResponse, error) {
+	messages, err := h.facebookUseCase.GetMessages(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting facebook messages")
+		return nil, err
+	}
+
+	response := &GetMessagesResponse{}
+	response.Body.Messages = messages
 	return response, nil
 }

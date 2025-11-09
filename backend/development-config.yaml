@@ -3,6 +3,9 @@ service:
   port: 8080
 
 mongo:
-    connectionString: mongodb://root:root@localhost:27017
-    databaseName: dataviewer
-    facebookImportsCollection: facebook_imports
+  connectionString: mongodb://root:root@localhost:27017
+  databaseName: dataviewer
+  facebookImportsCollection: facebook_imports
+  facebookAccountsCollection: facebook_accounts
+  facebookChatsCollection: facebook_chats
+  facebookMessagesCollection: facebook_messages

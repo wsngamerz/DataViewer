@@ -105,6 +105,130 @@ func (_c *MockFacebookUseCase_CreateImport_Call) RunAndReturn(run func(ctx conte
 	return _c
 }
 
+// GetAccounts provides a mock function for the type MockFacebookUseCase
+func (_mock *MockFacebookUseCase) GetAccounts(ctx context.Context) ([]dtos.AccountDTO, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAccounts")
+	}
+
+	var r0 []dtos.AccountDTO
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]dtos.AccountDTO, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) []dtos.AccountDTO); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]dtos.AccountDTO)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookUseCase_GetAccounts_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAccounts'
+type MockFacebookUseCase_GetAccounts_Call struct {
+	*mock.Call
+}
+
+// GetAccounts is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockFacebookUseCase_Expecter) GetAccounts(ctx interface{}) *MockFacebookUseCase_GetAccounts_Call {
+	return &MockFacebookUseCase_GetAccounts_Call{Call: _e.mock.On("GetAccounts", ctx)}
+}
+
+func (_c *MockFacebookUseCase_GetAccounts_Call) Run(run func(ctx context.Context)) *MockFacebookUseCase_GetAccounts_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetAccounts_Call) Return(accountDTOs []dtos.AccountDTO, err error) *MockFacebookUseCase_GetAccounts_Call {
+	_c.Call.Return(accountDTOs, err)
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetAccounts_Call) RunAndReturn(run func(ctx context.Context) ([]dtos.AccountDTO, error)) *MockFacebookUseCase_GetAccounts_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetChats provides a mock function for the type MockFacebookUseCase
+func (_mock *MockFacebookUseCase) GetChats(ctx context.Context) ([]dtos.ChatDTO, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetChats")
+	}
+
+	var r0 []dtos.ChatDTO
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]dtos.ChatDTO, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) []dtos.ChatDTO); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]dtos.ChatDTO)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookUseCase_GetChats_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChats'
+type MockFacebookUseCase_GetChats_Call struct {
+	*mock.Call
+}
+
+// GetChats is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockFacebookUseCase_Expecter) GetChats(ctx interface{}) *MockFacebookUseCase_GetChats_Call {
+	return &MockFacebookUseCase_GetChats_Call{Call: _e.mock.On("GetChats", ctx)}
+}
+
+func (_c *MockFacebookUseCase_GetChats_Call) Run(run func(ctx context.Context)) *MockFacebookUseCase_GetChats_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetChats_Call) Return(chatDTOs []dtos.ChatDTO, err error) *MockFacebookUseCase_GetChats_Call {
+	_c.Call.Return(chatDTOs, err)
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetChats_Call) RunAndReturn(run func(ctx context.Context) ([]dtos.ChatDTO, error)) *MockFacebookUseCase_GetChats_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetImports provides a mock function for the type MockFacebookUseCase
 func (_mock *MockFacebookUseCase) GetImports(ctx context.Context) ([]dtos.ImportDTO, error) {
 	ret := _mock.Called(ctx)
@@ -163,6 +287,68 @@ func (_c *MockFacebookUseCase_GetImports_Call) Return(importDTOs []dtos.ImportDT
 }
 
 func (_c *MockFacebookUseCase_GetImports_Call) RunAndReturn(run func(ctx context.Context) ([]dtos.ImportDTO, error)) *MockFacebookUseCase_GetImports_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetMessages provides a mock function for the type MockFacebookUseCase
+func (_mock *MockFacebookUseCase) GetMessages(ctx context.Context) ([]dtos.MessageDTO, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetMessages")
+	}
+
+	var r0 []dtos.MessageDTO
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]dtos.MessageDTO, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) []dtos.MessageDTO); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]dtos.MessageDTO)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookUseCase_GetMessages_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetMessages'
+type MockFacebookUseCase_GetMessages_Call struct {
+	*mock.Call
+}
+
+// GetMessages is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockFacebookUseCase_Expecter) GetMessages(ctx interface{}) *MockFacebookUseCase_GetMessages_Call {
+	return &MockFacebookUseCase_GetMessages_Call{Call: _e.mock.On("GetMessages", ctx)}
+}
+
+func (_c *MockFacebookUseCase_GetMessages_Call) Run(run func(ctx context.Context)) *MockFacebookUseCase_GetMessages_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetMessages_Call) Return(messageDTOs []dtos.MessageDTO, err error) *MockFacebookUseCase_GetMessages_Call {
+	_c.Call.Return(messageDTOs, err)
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetMessages_Call) RunAndReturn(run func(ctx context.Context) ([]dtos.MessageDTO, error)) *MockFacebookUseCase_GetMessages_Call {
 	_c.Call.Return(run)
 	return _c
 }

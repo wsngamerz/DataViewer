@@ -38,6 +38,120 @@ func (_m *MockFacebookRepo) EXPECT() *MockFacebookRepo_Expecter {
 	return &MockFacebookRepo_Expecter{mock: &_m.Mock}
 }
 
+// CreateAccount provides a mock function for the type MockFacebookRepo
+func (_mock *MockFacebookRepo) CreateAccount(ctx context.Context, a models.Account) error {
+	ret := _mock.Called(ctx, a)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateAccount")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, models.Account) error); ok {
+		r0 = returnFunc(ctx, a)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockFacebookRepo_CreateAccount_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateAccount'
+type MockFacebookRepo_CreateAccount_Call struct {
+	*mock.Call
+}
+
+// CreateAccount is a helper method to define mock.On call
+//   - ctx context.Context
+//   - a models.Account
+func (_e *MockFacebookRepo_Expecter) CreateAccount(ctx interface{}, a interface{}) *MockFacebookRepo_CreateAccount_Call {
+	return &MockFacebookRepo_CreateAccount_Call{Call: _e.mock.On("CreateAccount", ctx, a)}
+}
+
+func (_c *MockFacebookRepo_CreateAccount_Call) Run(run func(ctx context.Context, a models.Account)) *MockFacebookRepo_CreateAccount_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 models.Account
+		if args[1] != nil {
+			arg1 = args[1].(models.Account)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookRepo_CreateAccount_Call) Return(err error) *MockFacebookRepo_CreateAccount_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockFacebookRepo_CreateAccount_Call) RunAndReturn(run func(ctx context.Context, a models.Account) error) *MockFacebookRepo_CreateAccount_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateChat provides a mock function for the type MockFacebookRepo
+func (_mock *MockFacebookRepo) CreateChat(ctx context.Context, c models.Chat) error {
+	ret := _mock.Called(ctx, c)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateChat")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, models.Chat) error); ok {
+		r0 = returnFunc(ctx, c)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockFacebookRepo_CreateChat_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateChat'
+type MockFacebookRepo_CreateChat_Call struct {
+	*mock.Call
+}
+
+// CreateChat is a helper method to define mock.On call
+//   - ctx context.Context
+//   - c models.Chat
+func (_e *MockFacebookRepo_Expecter) CreateChat(ctx interface{}, c interface{}) *MockFacebookRepo_CreateChat_Call {
+	return &MockFacebookRepo_CreateChat_Call{Call: _e.mock.On("CreateChat", ctx, c)}
+}
+
+func (_c *MockFacebookRepo_CreateChat_Call) Run(run func(ctx context.Context, c models.Chat)) *MockFacebookRepo_CreateChat_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 models.Chat
+		if args[1] != nil {
+			arg1 = args[1].(models.Chat)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookRepo_CreateChat_Call) Return(err error) *MockFacebookRepo_CreateChat_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockFacebookRepo_CreateChat_Call) RunAndReturn(run func(ctx context.Context, c models.Chat) error) *MockFacebookRepo_CreateChat_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // CreateImport provides a mock function for the type MockFacebookRepo
 func (_mock *MockFacebookRepo) CreateImport(ctx context.Context, i models.Import) error {
 	ret := _mock.Called(ctx, i)
@@ -91,6 +205,187 @@ func (_c *MockFacebookRepo_CreateImport_Call) Return(err error) *MockFacebookRep
 }
 
 func (_c *MockFacebookRepo_CreateImport_Call) RunAndReturn(run func(ctx context.Context, i models.Import) error) *MockFacebookRepo_CreateImport_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// CreateMessage provides a mock function for the type MockFacebookRepo
+func (_mock *MockFacebookRepo) CreateMessage(ctx context.Context, m models.Message) error {
+	ret := _mock.Called(ctx, m)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateMessage")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, models.Message) error); ok {
+		r0 = returnFunc(ctx, m)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockFacebookRepo_CreateMessage_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateMessage'
+type MockFacebookRepo_CreateMessage_Call struct {
+	*mock.Call
+}
+
+// CreateMessage is a helper method to define mock.On call
+//   - ctx context.Context
+//   - m models.Message
+func (_e *MockFacebookRepo_Expecter) CreateMessage(ctx interface{}, m interface{}) *MockFacebookRepo_CreateMessage_Call {
+	return &MockFacebookRepo_CreateMessage_Call{Call: _e.mock.On("CreateMessage", ctx, m)}
+}
+
+func (_c *MockFacebookRepo_CreateMessage_Call) Run(run func(ctx context.Context, m models.Message)) *MockFacebookRepo_CreateMessage_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 models.Message
+		if args[1] != nil {
+			arg1 = args[1].(models.Message)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookRepo_CreateMessage_Call) Return(err error) *MockFacebookRepo_CreateMessage_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockFacebookRepo_CreateMessage_Call) RunAndReturn(run func(ctx context.Context, m models.Message) error) *MockFacebookRepo_CreateMessage_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetAccounts provides a mock function for the type MockFacebookRepo
+func (_mock *MockFacebookRepo) GetAccounts(ctx context.Context) ([]models.Account, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAccounts")
+	}
+
+	var r0 []models.Account
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]models.Account, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) []models.Account); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]models.Account)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookRepo_GetAccounts_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAccounts'
+type MockFacebookRepo_GetAccounts_Call struct {
+	*mock.Call
+}
+
+// GetAccounts is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockFacebookRepo_Expecter) GetAccounts(ctx interface{}) *MockFacebookRepo_GetAccounts_Call {
+	return &MockFacebookRepo_GetAccounts_Call{Call: _e.mock.On("GetAccounts", ctx)}
+}
+
+func (_c *MockFacebookRepo_GetAccounts_Call) Run(run func(ctx context.Context)) *MockFacebookRepo_GetAccounts_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetAccounts_Call) Return(accounts []models.Account, err error) *MockFacebookRepo_GetAccounts_Call {
+	_c.Call.Return(accounts, err)
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetAccounts_Call) RunAndReturn(run func(ctx context.Context) ([]models.Account, error)) *MockFacebookRepo_GetAccounts_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetChats provides a mock function for the type MockFacebookRepo
+func (_mock *MockFacebookRepo) GetChats(ctx context.Context) ([]models.Chat, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetChats")
+	}
+
+	var r0 []models.Chat
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]models.Chat, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) []models.Chat); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]models.Chat)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookRepo_GetChats_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChats'
+type MockFacebookRepo_GetChats_Call struct {
+	*mock.Call
+}
+
+// GetChats is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockFacebookRepo_Expecter) GetChats(ctx interface{}) *MockFacebookRepo_GetChats_Call {
+	return &MockFacebookRepo_GetChats_Call{Call: _e.mock.On("GetChats", ctx)}
+}
+
+func (_c *MockFacebookRepo_GetChats_Call) Run(run func(ctx context.Context)) *MockFacebookRepo_GetChats_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetChats_Call) Return(chats []models.Chat, err error) *MockFacebookRepo_GetChats_Call {
+	_c.Call.Return(chats, err)
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetChats_Call) RunAndReturn(run func(ctx context.Context) ([]models.Chat, error)) *MockFacebookRepo_GetChats_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -221,6 +516,68 @@ func (_c *MockFacebookRepo_GetImports_Call) Return(imports []models.Import, err 
 }
 
 func (_c *MockFacebookRepo_GetImports_Call) RunAndReturn(run func(ctx context.Context) ([]models.Import, error)) *MockFacebookRepo_GetImports_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetMessages provides a mock function for the type MockFacebookRepo
+func (_mock *MockFacebookRepo) GetMessages(ctx context.Context) ([]models.Message, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetMessages")
+	}
+
+	var r0 []models.Message
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]models.Message, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) []models.Message); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]models.Message)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookRepo_GetMessages_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetMessages'
+type MockFacebookRepo_GetMessages_Call struct {
+	*mock.Call
+}
+
+// GetMessages is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockFacebookRepo_Expecter) GetMessages(ctx interface{}) *MockFacebookRepo_GetMessages_Call {
+	return &MockFacebookRepo_GetMessages_Call{Call: _e.mock.On("GetMessages", ctx)}
+}
+
+func (_c *MockFacebookRepo_GetMessages_Call) Run(run func(ctx context.Context)) *MockFacebookRepo_GetMessages_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetMessages_Call) Return(messages []models.Message, err error) *MockFacebookRepo_GetMessages_Call {
+	_c.Call.Return(messages, err)
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetMessages_Call) RunAndReturn(run func(ctx context.Context) ([]models.Message, error)) *MockFacebookRepo_GetMessages_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -3,6 +3,9 @@ package facebook
 import (
 	"archive/zip"
 	"context"
+	"encoding/json"
+	"io"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -49,8 +52,36 @@ func (u usecase) CreateImport(ctx context.Context, input domain.CreateFacebookIm
 	return importModel.ToDTO(), nil
 }
 
+func (u usecase) GetAccounts(ctx context.Context) ([]dtos.AccountDTO, error) {
+	accounts, err := u.facebookRepo.GetAccounts(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return models.ToDTOs(accounts), nil
+}
+
+func (u usecase) GetChats(ctx context.Context) ([]dtos.ChatDTO, error) {
+	chats, err := u.facebookRepo.GetChats(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return models.ToDTOs(chats), nil
+}
+
+func (u usecase) GetMessages(ctx context.Context) ([]dtos.MessageDTO, error) {
+	messages, err := u.facebookRepo.GetMessages(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return models.ToDTOs(messages), nil
+}
+
 func (u usecase) processFacebookImport(zipReader *zip.Reader, id string) {
-	currentImport, err := u.facebookRepo.GetImport(context.Background(), id)
+	ctx := context.Background()
+	currentImport, err := u.facebookRepo.GetImport(ctx, id)
 	if err != nil {
 		log.Error().Err(err).Str("importID", id).Msg("Error fetching import for processing")
 		return
@@ -59,6 +90,12 @@ func (u usecase) processFacebookImport(zipReader *zip.Reader, id string) {
 	log.Info().Str("importID", id).Msg("Started processing facebook import")
 	for _, file := range zipReader.File {
 		log.Debug().Str("fileName", file.Name).Msg("Processing file")
+		if file.Name == "connections/friends/your_friends.json" {
+			if err := u.processFriendsFile(ctx, file, currentImport); err != nil {
+				log.Error().Err(err).Str("importID", id).Msg("Error processing friends file")
+				return
+			}
+		}
 	}
 
 	log.Info().Str("importID", id).Msg("Finished processing facebook import")
@@ -67,6 +104,49 @@ func (u usecase) processFacebookImport(zipReader *zip.Reader, id string) {
 		log.Error().Err(err).Str("importID", id).Msg("Error updating import status")
 		return
 	}
+}
+
+func (u usecase) processFriendsFile(ctx context.Context, file *zip.File, importModel *models.Import) error {
+	type FriendEntry struct {
+		Name      string `json:"name"`
+		Timestamp int64  `json:"timestamp"`
+	}
+
+	type FriendsFile struct {
+		Friends []FriendEntry `json:"friends_v2"`
+	}
+
+	var friendsData FriendsFile
+	rc, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer func(rc io.ReadCloser) {
+		if err := rc.Close(); err != nil {
+			log.Error().Err(err).Msg("Error closing friends file reader")
+		}
+	}(rc)
+	if err := json.NewDecoder(rc).Decode(&friendsData); err != nil {
+		return err
+	}
+
+	for _, friend := range friendsData.Friends {
+		log.Debug().Str("name", friend.Name).Int64("timestamp", friend.Timestamp).Msg("Processing friend")
+		accountModel := models.Account{
+			BaseModel: models.BaseModel{
+				ID: uuid.New().String(),
+			},
+			Name:        friend.Name,
+			UserID:      "", // Facebook does not provide user IDs in the data export
+			FriendSince: time.UnixMilli(friend.Timestamp * 1000),
+		}
+		accountModel.UpdateTimestamps()
+		if err := u.facebookRepo.CreateAccount(ctx, accountModel); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func createImportFromDTO(input domain.CreateFacebookImport) (models.Import, error) {
@@ -83,6 +163,6 @@ func createImportFromDTO(input domain.CreateFacebookImport) (models.Import, erro
 		Filename: input.Name,
 		Status:   "processing",
 	}
-	model.BaseModel.UpdateTimestamps()
+	model.UpdateTimestamps()
 	return model, nil
 }

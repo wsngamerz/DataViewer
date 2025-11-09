@@ -25,9 +25,12 @@ type Service struct {
 }
 
 type Mongo struct {
-	ConnectionString          string `yaml:"connectionString"`
-	DatabaseName              string `yaml:"databaseName"`
-	FacebookImportsCollection string `yaml:"facebookImportsCollection"`
+	ConnectionString           string `yaml:"connectionString"`
+	DatabaseName               string `yaml:"databaseName"`
+	FacebookImportsCollection  string `yaml:"facebookImportsCollection"`
+	FacebookAccountsCollection string `yaml:"facebookAccountsCollection"`
+	FacebookChatsCollection    string `yaml:"facebookChatsCollection"`
+	FacebookMessagesCollection string `yaml:"facebookMessagesCollection"`
 }
 
 // GetConfig loads the variables from config.yaml
