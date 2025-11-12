@@ -1,0 +1,83 @@
+version: '3'
+
+tasks:
+  install:
+    desc: "Install dependencies for frontend and backend"
+    cmds:
+    - cd backend && go mod download
+    - cd web && pnpm install
+
+  build-backend:
+    desc: "Build the Go backend"
+    cmds:
+    - cd backend && go build -o bin/server .
+
+  build-frontend:
+    desc: "Build the React frontend"
+    cmds:
+    - cd web && pnpm build
+
+  build:
+    desc: "Build both frontend and backend"
+    deps: [build-backend, build-frontend]
+
+  lint-backend:
+    desc: "Lint Go backend"
+    cmds:
+    - cd backend && golangci-lint run
+
+  lint-frontend:
+    desc: "Lint frontend (TypeScript/JavaScript)"
+    cmds:
+    - cd web && pnpm lint
+
+  lint:
+    desc: "Lint both frontend and backend"
+    deps: [lint-backend, lint-frontend]
+
+  test-backend:
+    desc: "Test Go backend"
+    cmds:
+    - cd backend && go test ./...
+
+  test-frontend:
+    desc: "Test frontend"
+    cmds:
+    - cd web && pnpm test
+
+  test:
+    desc: "Test both frontend and backend"
+    deps: [test-backend, test-frontend]
+
+  run-backend:
+    desc: "Run the backend server"
+    cmds:
+    - cd backend && make run
+
+  run-frontend:
+    desc: "Run the frontend application"
+    cmds:
+    - cd web && pnpm dev
+
+  run:
+    desc: "Run both frontend and backend concurrently"
+    deps: [run-backend, run-frontend]
+
+  clean-backend:
+    desc: "Clean backend build artifacts"
+    cmds:
+    - cd backend && go clean && rm -rf bin/
+
+  clean-frontend:
+    desc: "Clean frontend build artifacts"
+    cmds:
+    - cd web && pnpm clean || true
+
+  clean:
+    desc: "Clean all build artifacts"
+    deps: [clean-backend, clean-frontend]
+
+  default:
+    desc: "Show available tasks"
+    cmds:
+    - task --list
