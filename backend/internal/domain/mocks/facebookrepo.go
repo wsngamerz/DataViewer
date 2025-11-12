@@ -328,6 +328,142 @@ func (_c *MockFacebookRepo_GetAccounts_Call) RunAndReturn(run func(ctx context.C
 	return _c
 }
 
+// GetChatByID provides a mock function for the type MockFacebookRepo
+func (_mock *MockFacebookRepo) GetChatByID(ctx context.Context, id string) (*models.Chat, error) {
+	ret := _mock.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetChatByID")
+	}
+
+	var r0 *models.Chat
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (*models.Chat, error)); ok {
+		return returnFunc(ctx, id)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) *models.Chat); ok {
+		r0 = returnFunc(ctx, id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Chat)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookRepo_GetChatByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatByID'
+type MockFacebookRepo_GetChatByID_Call struct {
+	*mock.Call
+}
+
+// GetChatByID is a helper method to define mock.On call
+//   - ctx context.Context
+//   - id string
+func (_e *MockFacebookRepo_Expecter) GetChatByID(ctx interface{}, id interface{}) *MockFacebookRepo_GetChatByID_Call {
+	return &MockFacebookRepo_GetChatByID_Call{Call: _e.mock.On("GetChatByID", ctx, id)}
+}
+
+func (_c *MockFacebookRepo_GetChatByID_Call) Run(run func(ctx context.Context, id string)) *MockFacebookRepo_GetChatByID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetChatByID_Call) Return(chat *models.Chat, err error) *MockFacebookRepo_GetChatByID_Call {
+	_c.Call.Return(chat, err)
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetChatByID_Call) RunAndReturn(run func(ctx context.Context, id string) (*models.Chat, error)) *MockFacebookRepo_GetChatByID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetChatByThreadPath provides a mock function for the type MockFacebookRepo
+func (_mock *MockFacebookRepo) GetChatByThreadPath(ctx context.Context, threadPath string) (*models.Chat, error) {
+	ret := _mock.Called(ctx, threadPath)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetChatByThreadPath")
+	}
+
+	var r0 *models.Chat
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (*models.Chat, error)); ok {
+		return returnFunc(ctx, threadPath)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) *models.Chat); ok {
+		r0 = returnFunc(ctx, threadPath)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Chat)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, threadPath)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookRepo_GetChatByThreadPath_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatByThreadPath'
+type MockFacebookRepo_GetChatByThreadPath_Call struct {
+	*mock.Call
+}
+
+// GetChatByThreadPath is a helper method to define mock.On call
+//   - ctx context.Context
+//   - threadPath string
+func (_e *MockFacebookRepo_Expecter) GetChatByThreadPath(ctx interface{}, threadPath interface{}) *MockFacebookRepo_GetChatByThreadPath_Call {
+	return &MockFacebookRepo_GetChatByThreadPath_Call{Call: _e.mock.On("GetChatByThreadPath", ctx, threadPath)}
+}
+
+func (_c *MockFacebookRepo_GetChatByThreadPath_Call) Run(run func(ctx context.Context, threadPath string)) *MockFacebookRepo_GetChatByThreadPath_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetChatByThreadPath_Call) Return(chat *models.Chat, err error) *MockFacebookRepo_GetChatByThreadPath_Call {
+	_c.Call.Return(chat, err)
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetChatByThreadPath_Call) RunAndReturn(run func(ctx context.Context, threadPath string) (*models.Chat, error)) *MockFacebookRepo_GetChatByThreadPath_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetChats provides a mock function for the type MockFacebookRepo
 func (_mock *MockFacebookRepo) GetChats(ctx context.Context) ([]models.Chat, error) {
 	ret := _mock.Called(ctx)
@@ -578,6 +714,74 @@ func (_c *MockFacebookRepo_GetMessages_Call) Return(messages []models.Message, e
 }
 
 func (_c *MockFacebookRepo_GetMessages_Call) RunAndReturn(run func(ctx context.Context) ([]models.Message, error)) *MockFacebookRepo_GetMessages_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetMessagesByChatID provides a mock function for the type MockFacebookRepo
+func (_mock *MockFacebookRepo) GetMessagesByChatID(ctx context.Context, chatID string) ([]models.Message, error) {
+	ret := _mock.Called(ctx, chatID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetMessagesByChatID")
+	}
+
+	var r0 []models.Message
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) ([]models.Message, error)); ok {
+		return returnFunc(ctx, chatID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) []models.Message); ok {
+		r0 = returnFunc(ctx, chatID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]models.Message)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, chatID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookRepo_GetMessagesByChatID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetMessagesByChatID'
+type MockFacebookRepo_GetMessagesByChatID_Call struct {
+	*mock.Call
+}
+
+// GetMessagesByChatID is a helper method to define mock.On call
+//   - ctx context.Context
+//   - chatID string
+func (_e *MockFacebookRepo_Expecter) GetMessagesByChatID(ctx interface{}, chatID interface{}) *MockFacebookRepo_GetMessagesByChatID_Call {
+	return &MockFacebookRepo_GetMessagesByChatID_Call{Call: _e.mock.On("GetMessagesByChatID", ctx, chatID)}
+}
+
+func (_c *MockFacebookRepo_GetMessagesByChatID_Call) Run(run func(ctx context.Context, chatID string)) *MockFacebookRepo_GetMessagesByChatID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetMessagesByChatID_Call) Return(messages []models.Message, err error) *MockFacebookRepo_GetMessagesByChatID_Call {
+	_c.Call.Return(messages, err)
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetMessagesByChatID_Call) RunAndReturn(run func(ctx context.Context, chatID string) ([]models.Message, error)) *MockFacebookRepo_GetMessagesByChatID_Call {
 	_c.Call.Return(run)
 	return _c
 }

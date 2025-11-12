@@ -22,8 +22,12 @@ func NewHandler(g *huma.Group, fuc domain.FacebookUseCase) {
 	huma.Post(g, "/imports", h.createImport)
 
 	huma.Get(g, "/accounts", h.getAccounts)
+
 	huma.Get(g, "/chats", h.getChats)
+	huma.Get(g, "/chats/{id}", h.getChatByID)
+
 	huma.Get(g, "/messages", h.getMessages)
+	huma.Get(g, "/messages/{chatID}", h.getMessagesByChatID)
 }
 
 type GetImportsResponse struct {
@@ -110,6 +114,28 @@ func (h *handler) getChats(ctx context.Context, _ *struct{}) (*GetChatsResponse,
 	return response, nil
 }
 
+type GetChatByIDRequest struct {
+	ID string `path:"id" required:"true"`
+}
+
+type GetChatByIDResponse struct {
+	Body struct {
+		Chat dtos.ChatDTO `json:"chat"`
+	}
+}
+
+func (h *handler) getChatByID(ctx context.Context, input *GetChatByIDRequest) (*GetChatByIDResponse, error) {
+	chat, err := h.facebookUseCase.GetChatByID(ctx, input.ID)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting facebook chat by ID")
+		return nil, err
+	}
+
+	response := &GetChatByIDResponse{}
+	response.Body.Chat = chat
+	return response, nil
+}
+
 type GetMessagesResponse struct {
 	Body struct {
 		Messages []dtos.MessageDTO `json:"messages"`
@@ -124,6 +150,28 @@ func (h *handler) getMessages(ctx context.Context, _ *struct{}) (*GetMessagesRes
 	}
 
 	response := &GetMessagesResponse{}
+	response.Body.Messages = messages
+	return response, nil
+}
+
+type GetMessagesByChatIDRequest struct {
+	ChatID string `path:"chatID" required:"true"`
+}
+
+type GetMessagesByChatIDResponse struct {
+	Body struct {
+		Messages []dtos.MessageDTO `json:"messages"`
+	}
+}
+
+func (h *handler) getMessagesByChatID(ctx context.Context, input *GetMessagesByChatIDRequest) (*GetMessagesByChatIDResponse, error) {
+	messages, err := h.facebookUseCase.GetMessagesByChatID(ctx, input.ChatID)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting facebook messages by chat ID")
+		return nil, err
+	}
+
+	response := &GetMessagesByChatIDResponse{}
 	response.Body.Messages = messages
 	return response, nil
 }

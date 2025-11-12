@@ -2,9 +2,11 @@ package facebook
 
 import (
 	"context"
+	"errors"
 
 	"github.com/wsngamerz/dataviewer/internal/config"
 	"github.com/wsngamerz/dataviewer/internal/domain"
+	"github.com/wsngamerz/dataviewer/internal/errs"
 	"github.com/wsngamerz/dataviewer/internal/models"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -46,6 +48,9 @@ func (r repo) GetImport(ctx context.Context, id string) (*models.Import, error) 
 	var importModel models.Import
 	err := r.importCollection.FindOne(ctx, map[string]interface{}{"_id": id, "deleted": false}).Decode(&importModel)
 	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, errs.ErrNotFound
+		}
 		return nil, err
 	}
 
@@ -97,6 +102,32 @@ func (r repo) GetChats(ctx context.Context) ([]models.Chat, error) {
 	return chats, nil
 }
 
+func (r repo) GetChatByID(ctx context.Context, id string) (*models.Chat, error) {
+	var chat models.Chat
+	err := r.chatCollection.FindOne(ctx, map[string]interface{}{"_id": id, "deleted": false}).Decode(&chat)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, errs.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &chat, nil
+}
+
+func (r repo) GetChatByThreadPath(ctx context.Context, threadPath string) (*models.Chat, error) {
+	var chat models.Chat
+	err := r.chatCollection.FindOne(ctx, map[string]interface{}{"threadPath": threadPath, "deleted": false}).Decode(&chat)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, errs.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &chat, nil
+}
+
 func (r repo) CreateChat(ctx context.Context, c models.Chat) error {
 	_, err := r.chatCollection.InsertOne(ctx, c)
 	return err
@@ -105,6 +136,21 @@ func (r repo) CreateChat(ctx context.Context, c models.Chat) error {
 func (r repo) GetMessages(ctx context.Context) ([]models.Message, error) {
 	var messages []models.Message
 	cursor, err := r.messageCollection.Find(ctx, map[string]interface{}{"deleted": false})
+	if err != nil {
+		return messages, err
+	}
+
+	err = cursor.All(ctx, &messages)
+	if err != nil {
+		return messages, err
+	}
+
+	return messages, nil
+}
+
+func (r repo) GetMessagesByChatID(ctx context.Context, chatID string) ([]models.Message, error) {
+	var messages []models.Message
+	cursor, err := r.messageCollection.Find(ctx, map[string]interface{}{"chatId": chatID, "deleted": false})
 	if err != nil {
 		return messages, err
 	}

@@ -23,6 +23,7 @@ type ChatDTO struct {
 	ID             string   `json:"id"`
 	Title          string   `json:"title"`
 	ParticipantIDs []string `json:"participant_ids"`
+	ThreadPath     string   `json:"thread_path"`
 
 	CreatedAt time.Time `json:"created_at"`
 }

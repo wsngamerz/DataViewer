@@ -13,8 +13,12 @@ type FacebookUseCase interface {
 	CreateImport(ctx context.Context, createImportRequest CreateFacebookImport) (dtos.ImportDTO, error)
 
 	GetAccounts(ctx context.Context) ([]dtos.AccountDTO, error)
+
 	GetChats(ctx context.Context) ([]dtos.ChatDTO, error)
+	GetChatByID(ctx context.Context, id string) (dtos.ChatDTO, error)
+
 	GetMessages(ctx context.Context) ([]dtos.MessageDTO, error)
+	GetMessagesByChatID(ctx context.Context, chatID string) ([]dtos.MessageDTO, error)
 }
 
 type FacebookRepo interface {
@@ -27,9 +31,12 @@ type FacebookRepo interface {
 	CreateAccount(ctx context.Context, a models.Account) error
 
 	GetChats(ctx context.Context) ([]models.Chat, error)
+	GetChatByID(ctx context.Context, id string) (*models.Chat, error)
+	GetChatByThreadPath(ctx context.Context, threadPath string) (*models.Chat, error)
 	CreateChat(ctx context.Context, c models.Chat) error
 
 	GetMessages(ctx context.Context) ([]models.Message, error)
+	GetMessagesByChatID(ctx context.Context, chatID string) ([]models.Message, error)
 	CreateMessage(ctx context.Context, m models.Message) error
 }
 

@@ -42,6 +42,7 @@ type Chat struct {
 	BaseModel      `bson:",inline"`
 	Title          string   `bson:"title"`
 	ParticipantIDs []string `bson:"participantIds"`
+	ThreadPath     string   `bson:"threadPath"`
 }
 
 func (c Chat) ToDTO() dtos.ChatDTO {
@@ -50,6 +51,7 @@ func (c Chat) ToDTO() dtos.ChatDTO {
 		Title:          c.Title,
 		ParticipantIDs: c.ParticipantIDs,
 		CreatedAt:      c.CreatedAt,
+		ThreadPath:     c.ThreadPath,
 	}
 }
 

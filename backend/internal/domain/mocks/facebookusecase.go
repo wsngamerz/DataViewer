@@ -167,6 +167,72 @@ func (_c *MockFacebookUseCase_GetAccounts_Call) RunAndReturn(run func(ctx contex
 	return _c
 }
 
+// GetChatByID provides a mock function for the type MockFacebookUseCase
+func (_mock *MockFacebookUseCase) GetChatByID(ctx context.Context, id string) (dtos.ChatDTO, error) {
+	ret := _mock.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetChatByID")
+	}
+
+	var r0 dtos.ChatDTO
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (dtos.ChatDTO, error)); ok {
+		return returnFunc(ctx, id)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) dtos.ChatDTO); ok {
+		r0 = returnFunc(ctx, id)
+	} else {
+		r0 = ret.Get(0).(dtos.ChatDTO)
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookUseCase_GetChatByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatByID'
+type MockFacebookUseCase_GetChatByID_Call struct {
+	*mock.Call
+}
+
+// GetChatByID is a helper method to define mock.On call
+//   - ctx context.Context
+//   - id string
+func (_e *MockFacebookUseCase_Expecter) GetChatByID(ctx interface{}, id interface{}) *MockFacebookUseCase_GetChatByID_Call {
+	return &MockFacebookUseCase_GetChatByID_Call{Call: _e.mock.On("GetChatByID", ctx, id)}
+}
+
+func (_c *MockFacebookUseCase_GetChatByID_Call) Run(run func(ctx context.Context, id string)) *MockFacebookUseCase_GetChatByID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetChatByID_Call) Return(chatDTO dtos.ChatDTO, err error) *MockFacebookUseCase_GetChatByID_Call {
+	_c.Call.Return(chatDTO, err)
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetChatByID_Call) RunAndReturn(run func(ctx context.Context, id string) (dtos.ChatDTO, error)) *MockFacebookUseCase_GetChatByID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetChats provides a mock function for the type MockFacebookUseCase
 func (_mock *MockFacebookUseCase) GetChats(ctx context.Context) ([]dtos.ChatDTO, error) {
 	ret := _mock.Called(ctx)
@@ -349,6 +415,74 @@ func (_c *MockFacebookUseCase_GetMessages_Call) Return(messageDTOs []dtos.Messag
 }
 
 func (_c *MockFacebookUseCase_GetMessages_Call) RunAndReturn(run func(ctx context.Context) ([]dtos.MessageDTO, error)) *MockFacebookUseCase_GetMessages_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetMessagesByChatID provides a mock function for the type MockFacebookUseCase
+func (_mock *MockFacebookUseCase) GetMessagesByChatID(ctx context.Context, chatID string) ([]dtos.MessageDTO, error) {
+	ret := _mock.Called(ctx, chatID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetMessagesByChatID")
+	}
+
+	var r0 []dtos.MessageDTO
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) ([]dtos.MessageDTO, error)); ok {
+		return returnFunc(ctx, chatID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) []dtos.MessageDTO); ok {
+		r0 = returnFunc(ctx, chatID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]dtos.MessageDTO)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, chatID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookUseCase_GetMessagesByChatID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetMessagesByChatID'
+type MockFacebookUseCase_GetMessagesByChatID_Call struct {
+	*mock.Call
+}
+
+// GetMessagesByChatID is a helper method to define mock.On call
+//   - ctx context.Context
+//   - chatID string
+func (_e *MockFacebookUseCase_Expecter) GetMessagesByChatID(ctx interface{}, chatID interface{}) *MockFacebookUseCase_GetMessagesByChatID_Call {
+	return &MockFacebookUseCase_GetMessagesByChatID_Call{Call: _e.mock.On("GetMessagesByChatID", ctx, chatID)}
+}
+
+func (_c *MockFacebookUseCase_GetMessagesByChatID_Call) Run(run func(ctx context.Context, chatID string)) *MockFacebookUseCase_GetMessagesByChatID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetMessagesByChatID_Call) Return(messageDTOs []dtos.MessageDTO, err error) *MockFacebookUseCase_GetMessagesByChatID_Call {
+	_c.Call.Return(messageDTOs, err)
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetMessagesByChatID_Call) RunAndReturn(run func(ctx context.Context, chatID string) ([]dtos.MessageDTO, error)) *MockFacebookUseCase_GetMessagesByChatID_Call {
 	_c.Call.Return(run)
 	return _c
 }
