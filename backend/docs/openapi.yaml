@@ -1,0 +1,428 @@
+components:
+  schemas:
+    AccountDTO:
+      additionalProperties: false
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        timestamp:
+          format: date-time
+          type: string
+        user_id:
+          type: string
+      required:
+        - id
+        - user_id
+        - name
+        - timestamp
+        - created_at
+      type: object
+    ChatDTO:
+      additionalProperties: false
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        id:
+          type: string
+        participant_ids:
+          items:
+            type: string
+          type:
+            - array
+            - "null"
+        thread_path:
+          type: string
+        title:
+          type: string
+      required:
+        - id
+        - title
+        - participant_ids
+        - thread_path
+        - created_at
+      type: object
+    CreateImportResponseBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/CreateImportResponseBody.json
+          format: uri
+          readOnly: true
+          type: string
+        import:
+          $ref: "#/components/schemas/ImportDTO"
+      required:
+        - import
+      type: object
+    ErrorDetail:
+      additionalProperties: false
+      properties:
+        location:
+          description: Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'
+          type: string
+        message:
+          description: Error message text
+          type: string
+        value:
+          description: The value at the given location
+      type: object
+    ErrorModel:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/ErrorModel.json
+          format: uri
+          readOnly: true
+          type: string
+        detail:
+          description: A human-readable explanation specific to this occurrence of the problem.
+          examples:
+            - Property foo is required but is missing.
+          type: string
+        errors:
+          description: Optional list of individual error details
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+          type:
+            - array
+            - "null"
+        instance:
+          description: A URI reference that identifies the specific occurrence of the problem.
+          examples:
+            - https://example.com/error-log/abc123
+          format: uri
+          type: string
+        status:
+          description: HTTP status code
+          examples:
+            - 400
+          format: int64
+          type: integer
+        title:
+          description: A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
+          examples:
+            - Bad Request
+          type: string
+        type:
+          default: about:blank
+          description: A URI reference to human-readable documentation for the error.
+          examples:
+            - https://example.com/errors/example
+          format: uri
+          type: string
+      type: object
+    GetAccountsResponseBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/GetAccountsResponseBody.json
+          format: uri
+          readOnly: true
+          type: string
+        accounts:
+          items:
+            $ref: "#/components/schemas/AccountDTO"
+          type:
+            - array
+            - "null"
+      required:
+        - accounts
+      type: object
+    GetChatByIDResponseBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/GetChatByIDResponseBody.json
+          format: uri
+          readOnly: true
+          type: string
+        chat:
+          $ref: "#/components/schemas/ChatDTO"
+      required:
+        - chat
+      type: object
+    GetChatsResponseBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/GetChatsResponseBody.json
+          format: uri
+          readOnly: true
+          type: string
+        chats:
+          items:
+            $ref: "#/components/schemas/ChatDTO"
+          type:
+            - array
+            - "null"
+      required:
+        - chats
+      type: object
+    GetImportsResponseBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/GetImportsResponseBody.json
+          format: uri
+          readOnly: true
+          type: string
+        imports:
+          items:
+            $ref: "#/components/schemas/ImportDTO"
+          type:
+            - array
+            - "null"
+      required:
+        - imports
+      type: object
+    GetMessagesByChatIDResponseBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/GetMessagesByChatIDResponseBody.json
+          format: uri
+          readOnly: true
+          type: string
+        messages:
+          items:
+            $ref: "#/components/schemas/MessageDTO"
+          type:
+            - array
+            - "null"
+      required:
+        - messages
+      type: object
+    GetMessagesResponseBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/GetMessagesResponseBody.json
+          format: uri
+          readOnly: true
+          type: string
+        messages:
+          items:
+            $ref: "#/components/schemas/MessageDTO"
+          type:
+            - array
+            - "null"
+      required:
+        - messages
+      type: object
+    ImportDTO:
+      additionalProperties: false
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        filename:
+          type: string
+        id:
+          type: string
+        status:
+          type: string
+      required:
+        - id
+        - filename
+        - status
+        - created_at
+      type: object
+    MessageDTO:
+      additionalProperties: false
+      properties:
+        chat_id:
+          type: string
+        content:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        id:
+          type: string
+        sender_id:
+          type: string
+      required:
+        - id
+        - chat_id
+        - sender_id
+        - content
+        - created_at
+      type: object
+info:
+  title: DataViewer API
+  version: 1.0.0
+openapi: 3.1.0
+paths:
+  /api/facebook/accounts:
+    get:
+      operationId: get-api-facebook-accounts
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAccountsResponseBody"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Get API facebook accounts
+  /api/facebook/chats:
+    get:
+      operationId: get-api-facebook-chats
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetChatsResponseBody"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Get API facebook chats
+  /api/facebook/chats/{id}:
+    get:
+      operationId: get-api-facebook-chats-by-id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetChatByIDResponseBody"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Get API facebook chats by ID
+  /api/facebook/imports:
+    get:
+      operationId: get-api-facebook-imports
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetImportsResponseBody"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Get API facebook imports
+    post:
+      operationId: post-api-facebook-imports
+      requestBody:
+        content:
+          multipart/form-data:
+            encoding:
+              file:
+                contentType: application/zip
+              name:
+                contentType: text/plain
+            schema:
+              properties:
+                file:
+                  contentEncoding: binary
+                  contentMediaType: application/octet-stream
+                  format: binary
+                  type: string
+                name:
+                  type: string
+              required:
+                - file
+                - name
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateImportResponseBody"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Post API facebook imports
+  /api/facebook/messages:
+    get:
+      operationId: get-api-facebook-messages
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetMessagesResponseBody"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Get API facebook messages
+  /api/facebook/messages/{chatID}:
+    get:
+      operationId: get-api-facebook-messages-by-chat-id
+      parameters:
+        - in: path
+          name: chatID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetMessagesByChatIDResponseBody"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Get API facebook messages by chat ID
