@@ -1,21 +1,28 @@
 import React, {useRef} from 'react';
-import {createFileRoute} from '@tanstack/react-router';
-import {useInfiniteQuery} from '@tanstack/react-query';
+import {createFileRoute, useNavigate} from '@tanstack/react-router';
+import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import type {MessageDto} from '@/client/types.gen';
-import {getApiFacebookMessagesByChatIdInfiniteOptions} from "@/client/@tanstack/react-query.gen.ts";
+import {getApiFacebookMessagesByChatIdInfiniteOptions, getApiFacebookChatsByIdOptions} from "@/client/@tanstack/react-query.gen.ts";
 
 export const Route = createFileRoute('/chat/$chatid')({
     component: ChatPage,
 });
 
 function getInitials(senderId: string) {
-    // Simple initials from senderId (could be improved if names are available)
     return senderId?.slice(0, 2).toUpperCase();
 }
 
 function ChatPage() {
     const {chatid} = Route.useParams();
+    const navigate = useNavigate();
     const bottomRef = useRef<HTMLDivElement>(null);
+
+    // Fetch chat details
+    const {data: chatData, status: chatStatus} = useQuery(
+        getApiFacebookChatsByIdOptions({
+            path: {id: chatid},
+        })
+    );
 
     const {
         data,
@@ -26,9 +33,7 @@ function ChatPage() {
         error,
     } = useInfiniteQuery({
         ...getApiFacebookMessagesByChatIdInfiniteOptions({
-            path: {
-                chatID: chatid,
-            },
+            path: {chatID: chatid},
         }),
         getNextPageParam: (lastPage, _pages) => lastPage.total,
         initialPageParam: 0,
@@ -40,7 +45,6 @@ function ChatPage() {
         }
     }, [data]);
 
-    // Infinite scroll handler
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const {scrollTop} = e.currentTarget;
         if (scrollTop === 0 && hasNextPage && !isFetchingNextPage) {
@@ -48,19 +52,47 @@ function ChatPage() {
         }
     };
 
-    // Flatten all messages for easier checks
     const allMessages = data?.pages.flatMap(page => page.messages || []) || [];
+    const chat = chatData?.chat;
+    const chatTitle = chat?.title || chatid;
+    const participantNames = chat?.participant_ids || []; // the ids are actually names for now. this will be fixed when we have accounts data
 
     return (
         <div style={{height: '100vh', display: 'flex', flexDirection: 'column', background: '#f7f7fa'}}>
             {/* Header */}
             <div style={{padding: '16px', background: '#fff', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', gap: 16}}>
+                {/* Back button */}
+                <button
+                    onClick={() => navigate({to: '/chats'})}
+                    aria-label="Back to chats"
+                    style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: 0,
+                        marginRight: 12,
+                        display: 'flex',
+                        alignItems: 'center',
+                        fontSize: 22,
+                        color: '#6366f1',
+                    }}
+                >
+                    {/* Simple left arrow icon */}
+                    <span style={{fontSize: 22, lineHeight: 1, marginRight: 2}}>&larr;</span>
+                </button>
                 <div style={{width: 40, height: 40, borderRadius: '50%', background: '#d1d5db', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18, color: '#444'}}>
-                    {getInitials(chatid)}
+                    {getInitials(chatTitle)}
                 </div>
                 <div>
-                    <div style={{fontWeight: 600, fontSize: 18}}>Chat: {chatid}</div>
+                    <div style={{fontWeight: 600, fontSize: 18}}>{chatTitle}</div>
                     <div style={{fontSize: 12, color: '#888'}}>Facebook Chat</div>
+                    {chatStatus === 'pending' && <div style={{fontSize: 12, color: '#aaa'}}>Loading chat details...</div>}
+                    {chatStatus === 'error' && <div style={{fontSize: 12, color: 'red'}}>Error loading chat</div>}
+                    {chat && participantNames.length > 0 && (
+                        <div style={{fontSize: 13, color: '#666', marginTop: 2}}>
+                            Participants: {participantNames.join(', ')}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -73,8 +105,8 @@ function ChatPage() {
                         No messages in this chat yet.
                     </div>
                 )}
-                {data?.pages.map((page, i) => (
-                    <React.Fragment key={i}>
+                {data?.pages.map((page) => (
+                    <React.Fragment key={page?.messages?.[0]?.id || Math.random()}>
                         {page.messages?.map((msg: MessageDto) => {
                             const isOwn = msg.sender_id === chatid;
                             return (
