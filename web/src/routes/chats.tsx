@@ -1,9 +1,9 @@
 import React from 'react';
-import { createFileRoute } from '@tanstack/react-router';
+import {createFileRoute, Link} from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { getApiFacebookChatsOptions } from '@/client/@tanstack/react-query.gen';
 import type { ChatDto } from '@/client/types.gen';
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import {type ColumnDef, flexRender, getCoreRowModel, useReactTable} from '@tanstack/react-table';
 
 export const Route = createFileRoute('/chats')({
     component: ChatsPage,
@@ -15,9 +15,9 @@ function ChatsPage() {
     const chats: ChatDto[] = data?.chats ?? [];
 
     // Define columns for the table
-    const columns = React.useMemo(
+    const columns: ColumnDef<ChatDto, any>[] = React.useMemo(
         () => [
-            { accessorKey: 'id', header: 'Chat ID' },
+            { accessorKey: 'id', header: 'Chat ID', cell: info => <Link to={`/chat/$chatid`} params={{chatid: info.getValue()}}>{info.getValue()}</Link> },
             { accessorKey: 'title', header: 'Title' },
             { accessorKey: 'created_at', header: 'Created At' },
             // Add more columns as needed based on ChatDto
