@@ -160,37 +160,51 @@ function ChatPage() {
                 </div>
                 {/* Right: Participants, message count, created date with icons */}
                 {chatSummary && (
-                    <div style={{display: 'flex', alignItems: 'center', gap: 18, minWidth: 0, flex: 1, justifyContent: 'flex-end', flexWrap: 'wrap'}}>
-                        {/* Participants */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 32,
+                        minWidth: 0,
+                        flex: 1,
+                        justifyContent: 'flex-end',
+                        flexWrap: 'nowrap',
+                        textAlign: 'right',
+                    }}>
+                        {/* Participants: count, icon, names, ellipsis, tooltip */}
                         <div
                             title={participantNames.length > 0 ? participantNames.join(', ') : undefined}
-                            style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666', minWidth: 0, flexWrap: 'wrap', width: 'auto'}}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                minWidth: 0,
+                                maxWidth: 320,
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis',
+                                gap: 6,
+                                fontSize: 15,
+                                color: '#666',
+                            }}
                         >
-                            <span aria-hidden="true">👥</span>
-                            <span style={{position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden'}}>Participants</span>
-                            <span style={{display: 'inline', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'normal', wordBreak: 'break-word'}}>
-                                {participantNames.length > 0 ? (
-                                    <>
-                                        {participantNames.slice(0, 4).map((x, i) => (
-                                            <span key={x}>
-                                                {x}{i < Math.min(participantNames.length, 4) - 1 ? ', ' : ''}
-                                            </span>
-                                        ))}
-                                        {participantNames.length > 4 && (
-                                            <span>+{participantNames.length - 4} more</span>
-                                        )}
-                                    </>
-                                ) : '—'}
+                            <span title="Participant count" style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666', whiteSpace: 'nowrap'}}>
+                                <span aria-hidden="true">👥</span>
+                                <span style={{position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden'}}>Participants</span>
+                                <span>{participantNames.length}</span>
+                            </span>
+                            <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'inline-block'}}>
+                                {participantNames.length > 0
+                                    ? "- " + participantNames.map(n => n.split(" ")[0]).join(', ')
+                                    : '—'}
                             </span>
                         </div>
                         {/* Message count */}
-                        <div title="Message count" style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666'}}>
+                        <div title="Message count" style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666', whiteSpace: 'nowrap'}}>
                             <span aria-hidden="true">💬</span>
                             <span style={{position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden'}}>Messages</span>
                             <span>{chatSummary.message_count}</span>
                         </div>
                         {/* Created date */}
-                        <div title="Created" style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666'}}>
+                        <div title="Created" style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666', whiteSpace: 'nowrap'}}>
                             <span aria-hidden="true">📅</span>
                             <span style={{position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden'}}>Created</span>
                             <span>{chatSummary.estimated_created_at ? new Date(chatSummary.estimated_created_at).toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'}) : '—'}</span>
