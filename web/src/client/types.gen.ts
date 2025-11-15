@@ -99,6 +99,14 @@ export type GetChatByIdResponseBody = {
     chat: ChatDto;
 };
 
+export type GetChatSummariesResponseBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    summaries: Array<ChatSummaryDto> | null;
+};
+
 export type GetChatSummaryResponseBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -198,6 +206,10 @@ export type GetChatByIdResponseBodyWritable = {
     chat: ChatDto;
 };
 
+export type GetChatSummariesResponseBodyWritable = {
+    summaries: Array<ChatSummaryDto> | null;
+};
+
 export type GetChatSummaryResponseBodyWritable = {
     summary: ChatSummaryDto;
 };
@@ -271,6 +283,31 @@ export type GetApiFacebookChatsResponses = {
 };
 
 export type GetApiFacebookChatsResponse = GetApiFacebookChatsResponses[keyof GetApiFacebookChatsResponses];
+
+export type GetApiFacebookChatsSummariesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/facebook/chats/summaries';
+};
+
+export type GetApiFacebookChatsSummariesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetApiFacebookChatsSummariesError = GetApiFacebookChatsSummariesErrors[keyof GetApiFacebookChatsSummariesErrors];
+
+export type GetApiFacebookChatsSummariesResponses = {
+    /**
+     * OK
+     */
+    200: GetChatSummariesResponseBody;
+};
+
+export type GetApiFacebookChatsSummariesResponse = GetApiFacebookChatsSummariesResponses[keyof GetApiFacebookChatsSummariesResponses];
 
 export type GetApiFacebookChatsByIdData = {
     body?: never;

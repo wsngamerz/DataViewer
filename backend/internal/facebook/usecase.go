@@ -111,6 +111,23 @@ func (u usecase) GetMessagesByChatID(ctx context.Context, chatID string, page in
 	return models.ToDTOs(messages), total, nil
 }
 
+func (u usecase) GetChatSummaries(ctx context.Context) ([]dtos.ChatSummaryDTO, error) {
+	chats, err := u.facebookRepo.GetChats(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	summaries := make([]dtos.ChatSummaryDTO, 0, len(chats))
+	for _, chat := range chats {
+		summary, err := u.facebookRepo.GetChatSummary(ctx, chat.ID)
+		if err != nil {
+			return nil, err
+		}
+		summaries = append(summaries, summary)
+	}
+	return summaries, nil
+}
+
 func (u usecase) processFacebookImport(zipReader *zip.Reader, id string) {
 	ctx := context.Background()
 	currentImport, err := u.facebookRepo.GetImport(ctx, id)

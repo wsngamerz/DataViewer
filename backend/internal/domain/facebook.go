@@ -17,6 +17,7 @@ type FacebookUseCase interface {
 	GetChats(ctx context.Context) ([]dtos.ChatDTO, error)
 	GetChatByID(ctx context.Context, id string) (dtos.ChatDTO, error)
 	GetChatSummary(ctx context.Context, id string) (dtos.ChatSummaryDTO, error)
+	GetChatSummaries(ctx context.Context) ([]dtos.ChatSummaryDTO, error)
 
 	GetMessages(ctx context.Context) ([]dtos.MessageDTO, error)
 	GetMessagesByChatID(ctx context.Context, chatID string, page int, pageSize int) ([]dtos.MessageDTO, int, error)

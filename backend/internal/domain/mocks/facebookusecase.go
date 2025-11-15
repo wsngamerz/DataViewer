@@ -233,6 +233,68 @@ func (_c *MockFacebookUseCase_GetChatByID_Call) RunAndReturn(run func(ctx contex
 	return _c
 }
 
+// GetChatSummaries provides a mock function for the type MockFacebookUseCase
+func (_mock *MockFacebookUseCase) GetChatSummaries(ctx context.Context) ([]dtos.ChatSummaryDTO, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetChatSummaries")
+	}
+
+	var r0 []dtos.ChatSummaryDTO
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]dtos.ChatSummaryDTO, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) []dtos.ChatSummaryDTO); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]dtos.ChatSummaryDTO)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookUseCase_GetChatSummaries_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatSummaries'
+type MockFacebookUseCase_GetChatSummaries_Call struct {
+	*mock.Call
+}
+
+// GetChatSummaries is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockFacebookUseCase_Expecter) GetChatSummaries(ctx interface{}) *MockFacebookUseCase_GetChatSummaries_Call {
+	return &MockFacebookUseCase_GetChatSummaries_Call{Call: _e.mock.On("GetChatSummaries", ctx)}
+}
+
+func (_c *MockFacebookUseCase_GetChatSummaries_Call) Run(run func(ctx context.Context)) *MockFacebookUseCase_GetChatSummaries_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetChatSummaries_Call) Return(chatSummaryDTOs []dtos.ChatSummaryDTO, err error) *MockFacebookUseCase_GetChatSummaries_Call {
+	_c.Call.Return(chatSummaryDTOs, err)
+	return _c
+}
+
+func (_c *MockFacebookUseCase_GetChatSummaries_Call) RunAndReturn(run func(ctx context.Context) ([]dtos.ChatSummaryDTO, error)) *MockFacebookUseCase_GetChatSummaries_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetChatSummary provides a mock function for the type MockFacebookUseCase
 func (_mock *MockFacebookUseCase) GetChatSummary(ctx context.Context, id string) (dtos.ChatSummaryDTO, error) {
 	ret := _mock.Called(ctx, id)

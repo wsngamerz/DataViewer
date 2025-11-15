@@ -27,6 +27,7 @@ func NewHandler(g *huma.Group, fuc domain.FacebookUseCase) {
 	huma.Get(g, "/chats/{id}", h.getChatByID)
 	huma.Get(g, "/chats/{id}/summary", h.getChatSummary)
 	huma.Get(g, "/chats/{id}/messages", h.getMessagesByChatID)
+	huma.Get(g, "/chats/summaries", h.getChatSummaries)
 
 	huma.Get(g, "/messages", h.getMessages)
 }
@@ -208,5 +209,23 @@ func (h *handler) getChatSummary(ctx context.Context, input *GetChatSummaryReque
 
 	response := &GetChatSummaryResponse{}
 	response.Body.Summary = summary
+	return response, nil
+}
+
+type GetChatSummariesResponse struct {
+	Body struct {
+		Summaries []dtos.ChatSummaryDTO `json:"summaries"`
+	}
+}
+
+func (h *handler) getChatSummaries(ctx context.Context, _ *struct{}) (*GetChatSummariesResponse, error) {
+	summaries, err := h.facebookUseCase.GetChatSummaries(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting facebook chat summaries")
+		return nil, err
+	}
+
+	response := &GetChatSummariesResponse{}
+	response.Body.Summaries = summaries
 	return response, nil
 }

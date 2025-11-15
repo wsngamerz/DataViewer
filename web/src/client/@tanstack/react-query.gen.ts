@@ -3,8 +3,8 @@
 import { type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { getApiFacebookAccounts, getApiFacebookChats, getApiFacebookChatsById, getApiFacebookChatsByIdMessages, getApiFacebookChatsByIdSummary, getApiFacebookImports, getApiFacebookMessages, type Options, postApiFacebookImports } from '../sdk.gen';
-import type { GetApiFacebookAccountsData, GetApiFacebookChatsByIdData, GetApiFacebookChatsByIdMessagesData, GetApiFacebookChatsByIdMessagesError, GetApiFacebookChatsByIdMessagesResponse, GetApiFacebookChatsByIdSummaryData, GetApiFacebookChatsData, GetApiFacebookImportsData, GetApiFacebookMessagesData, PostApiFacebookImportsData, PostApiFacebookImportsError, PostApiFacebookImportsResponse } from '../types.gen';
+import { getApiFacebookAccounts, getApiFacebookChats, getApiFacebookChatsById, getApiFacebookChatsByIdMessages, getApiFacebookChatsByIdSummary, getApiFacebookChatsSummaries, getApiFacebookImports, getApiFacebookMessages, type Options, postApiFacebookImports } from '../sdk.gen';
+import type { GetApiFacebookAccountsData, GetApiFacebookChatsByIdData, GetApiFacebookChatsByIdMessagesData, GetApiFacebookChatsByIdMessagesError, GetApiFacebookChatsByIdMessagesResponse, GetApiFacebookChatsByIdSummaryData, GetApiFacebookChatsData, GetApiFacebookChatsSummariesData, GetApiFacebookImportsData, GetApiFacebookMessagesData, PostApiFacebookImportsData, PostApiFacebookImportsError, PostApiFacebookImportsResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -75,6 +75,24 @@ export const getApiFacebookChatsOptions = (options?: Options<GetApiFacebookChats
         return data;
     },
     queryKey: getApiFacebookChatsQueryKey(options)
+});
+
+export const getApiFacebookChatsSummariesQueryKey = (options?: Options<GetApiFacebookChatsSummariesData>) => createQueryKey('getApiFacebookChatsSummaries', options);
+
+/**
+ * Get API facebook chats summaries
+ */
+export const getApiFacebookChatsSummariesOptions = (options?: Options<GetApiFacebookChatsSummariesData>) => queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getApiFacebookChatsSummaries({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getApiFacebookChatsSummariesQueryKey(options)
 });
 
 export const getApiFacebookChatsByIdQueryKey = (options: Options<GetApiFacebookChatsByIdData>) => createQueryKey('getApiFacebookChatsById', options);
