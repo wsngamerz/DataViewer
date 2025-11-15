@@ -2,7 +2,7 @@ import {createFileRoute, Link, Outlet} from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { getApiFacebookChatsOptions } from '@/client/@tanstack/react-query.gen';
 import type { ChatDto } from '@/client/types.gen';
-import { getAvatarColor } from '../lib/utils';
+import { getAvatarColor, getAvatarInitials } from '../lib/utils';
 
 export const Route = createFileRoute('/chats')({
     component: ChatsPage,
@@ -82,7 +82,7 @@ function ChatsPage() {
                                 flexShrink: 0,
                                 border: '1px solid #e5e7eb',
                             }}>
-                                {chat.title ? chat.title.slice(0, 2).toUpperCase() : '??'}
+                                {getAvatarInitials(chat.title || chat.id || '')}
                             </span>
                             <span style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
                                 <span style={{ fontWeight: 600, fontSize: '1.1rem', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{chat.title || 'Untitled Chat'}</span>

@@ -26,3 +26,16 @@ export function getAvatarColor(seed: string): string {
   const idx = Math.abs(hash) % colors.length;
   return colors[idx];
 }
+
+// Utility to generate avatar initials from a string (e.g., name, id, or title)
+export function getAvatarInitials(seed: string): string {
+  if (!seed) return '??';
+  // Remove leading/trailing whitespace and split by space
+  const words = seed.trim().split(' ');
+  if (words.length === 1) {
+    // If only one word, take first two letters
+    return words[0].slice(0, 2).toUpperCase();
+  }
+  // Otherwise, take first letter of first two words
+  return (words[0][0] + words[1][0]).toUpperCase();
+}

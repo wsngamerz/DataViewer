@@ -3,15 +3,11 @@ import {createFileRoute, useNavigate} from '@tanstack/react-router';
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import type {MessageDto} from '@/client/types.gen';
 import {getApiFacebookMessagesByChatIdInfiniteOptions, getApiFacebookChatsByIdOptions} from "@/client/@tanstack/react-query.gen.ts";
-import { getAvatarColor } from '../lib/utils';
+import { getAvatarColor, getAvatarInitials } from '../lib/utils';
 
 export const Route = createFileRoute('/chats/$chatid')({
     component: ChatPage,
 });
-
-function getInitials(senderId: string) {
-    return senderId?.slice(0, 2).toUpperCase();
-}
 
 function ChatPage() {
     const {chatid} = Route.useParams();
@@ -82,7 +78,7 @@ function ChatPage() {
                     <span style={{fontSize: 22, lineHeight: 1, marginRight: 2}}>&larr;</span>
                 </button>
                 <div style={{width: 40, height: 40, borderRadius: '50%', background: '#d1d5db', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18, color: '#444'}}>
-                    {getInitials(chatTitle)}
+                    {getAvatarInitials(chatTitle)}
                 </div>
                 <div>
                     <div style={{fontWeight: 600, fontSize: 18}}>{chatTitle}</div>
@@ -114,7 +110,7 @@ function ChatPage() {
                                 <div key={msg.id} style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-end', margin: '12px 24px'}}>
                                     {/* Avatar */}
                                     <div style={{width: 36, height: 36, borderRadius: '50%', background: getAvatarColor(msg.sender_id), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15, color: '#fff', margin: isOwn ? '0 0 0 12px' : '0 12px 0 0'}}>
-                                        {getInitials(msg.sender_id)}
+                                        {getAvatarInitials(msg.sender_id)}
                                     </div>
                                     {/* Message bubble */}
                                     <div style={{background: isOwn ? '#6366f1' : '#fff', color: isOwn ? '#fff' : '#222', borderRadius: 16, padding: '10px 16px', maxWidth: 420, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', position: 'relative'}}>
