@@ -51,8 +51,9 @@ function ChatsPage() {
                             params={{ chatid: chat.id }}
                             style={{
                                 display: 'flex',
-                                flexDirection: 'column',
-                                padding: '1rem',
+                                alignItems: 'center',
+                                gap: '1rem',
+                                padding: '0.75rem 1rem',
                                 borderRadius: 8,
                                 border: '1px solid #e0e0e0',
                                 background: '#fff',
@@ -60,13 +61,32 @@ function ChatsPage() {
                                 color: 'inherit',
                                 boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                                 transition: 'box-shadow 0.15s, border 0.15s',
+                                cursor: 'pointer',
                             }}
                             onMouseOver={e => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.10)')}
                             onMouseOut={e => (e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)')}
                         >
-                            <span style={{ fontWeight: 600, fontSize: '1.1rem', marginBottom: 4 }}>{chat.title || 'Untitled Chat'}</span>
-                            <span style={{ color: '#888', fontSize: '0.95rem' }}>Created: {chat.created_at ? new Date(chat.created_at).toLocaleString() : 'Unknown'}</span>
-                            <span style={{ color: '#bbb', fontSize: '0.85rem', marginTop: 2 }}>ID: {chat.id}</span>
+                            {/* Avatar Circle */}
+                            <span style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: '50%',
+                                background: '#f3f4f6',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: 700,
+                                fontSize: '1.1rem',
+                                color: '#6366f1',
+                                flexShrink: 0,
+                                border: '1px solid #e5e7eb',
+                            }}>
+                                {chat.title ? chat.title.slice(0, 2).toUpperCase() : '??'}
+                            </span>
+                            <span style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
+                                <span style={{ fontWeight: 600, fontSize: '1.1rem', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{chat.title || 'Untitled Chat'}</span>
+                                <span style={{ color: '#888', fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Created: {chat.created_at ? new Date(chat.created_at).toLocaleString() : 'Unknown'}</span>
+                            </span>
                         </Link>
                     ))}
                 </div>
