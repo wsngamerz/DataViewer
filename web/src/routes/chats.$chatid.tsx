@@ -10,6 +10,7 @@ import {getAvatarColor, getAvatarInitials} from '../lib/utils';
 import {useUser} from '../lib/user-context';
 
 const PAGE_SIZE = 100;
+const SCROLL_THRESHOLD = 400;
 
 export const Route = createFileRoute('/chats/$chatid')({
     component: ChatPage,
@@ -81,7 +82,7 @@ function ChatPage() {
     // Maintain scroll position when loading older messages
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const chatBody = e.currentTarget;
-        if (chatBody.scrollTop === 0 && hasNextPage && !isFetchingNextPage) {
+        if (chatBody.scrollTop < SCROLL_THRESHOLD && hasNextPage && !isFetchingNextPage) {
             const prevScrollHeight = chatBody.scrollHeight;
             fetchNextPage().then(() => {
                 // After loading, adjust scrollTop so user stays at the same message
@@ -173,6 +174,7 @@ function ChatPage() {
                         flexDirection: 'column',
                         alignItems: 'center',
                         fontSize: 13,
+                        zIndex: 10,
                     }}>
                         <div style={{
                             width: 20,
