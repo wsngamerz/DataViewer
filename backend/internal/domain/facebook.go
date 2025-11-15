@@ -38,6 +38,7 @@ type FacebookRepo interface {
 	GetMessages(ctx context.Context) ([]models.Message, error)
 	GetMessagesByChatID(ctx context.Context, chatID string, limit int, offset int) ([]models.Message, int, error)
 	CreateMessage(ctx context.Context, m models.Message) error
+	CreateMessagesBulk(ctx context.Context, messages []models.Message) error
 }
 
 type CreateFacebookImport struct {

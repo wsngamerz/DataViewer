@@ -173,3 +173,12 @@ func (r repo) CreateMessage(ctx context.Context, m models.Message) error {
 	_, err := r.messageCollection.InsertOne(ctx, m)
 	return err
 }
+
+func (r repo) CreateMessagesBulk(ctx context.Context, messages []models.Message) error {
+	docs := make([]interface{}, len(messages))
+	for i, m := range messages {
+		docs[i] = m
+	}
+	_, err := r.messageCollection.InsertMany(ctx, docs)
+	return err
+}

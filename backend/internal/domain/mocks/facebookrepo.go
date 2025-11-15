@@ -266,6 +266,63 @@ func (_c *MockFacebookRepo_CreateMessage_Call) RunAndReturn(run func(ctx context
 	return _c
 }
 
+// CreateMessagesBulk provides a mock function for the type MockFacebookRepo
+func (_mock *MockFacebookRepo) CreateMessagesBulk(ctx context.Context, messages []models.Message) error {
+	ret := _mock.Called(ctx, messages)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateMessagesBulk")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []models.Message) error); ok {
+		r0 = returnFunc(ctx, messages)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockFacebookRepo_CreateMessagesBulk_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateMessagesBulk'
+type MockFacebookRepo_CreateMessagesBulk_Call struct {
+	*mock.Call
+}
+
+// CreateMessagesBulk is a helper method to define mock.On call
+//   - ctx context.Context
+//   - messages []models.Message
+func (_e *MockFacebookRepo_Expecter) CreateMessagesBulk(ctx interface{}, messages interface{}) *MockFacebookRepo_CreateMessagesBulk_Call {
+	return &MockFacebookRepo_CreateMessagesBulk_Call{Call: _e.mock.On("CreateMessagesBulk", ctx, messages)}
+}
+
+func (_c *MockFacebookRepo_CreateMessagesBulk_Call) Run(run func(ctx context.Context, messages []models.Message)) *MockFacebookRepo_CreateMessagesBulk_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 []models.Message
+		if args[1] != nil {
+			arg1 = args[1].([]models.Message)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookRepo_CreateMessagesBulk_Call) Return(err error) *MockFacebookRepo_CreateMessagesBulk_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockFacebookRepo_CreateMessagesBulk_Call) RunAndReturn(run func(ctx context.Context, messages []models.Message) error) *MockFacebookRepo_CreateMessagesBulk_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetAccounts provides a mock function for the type MockFacebookRepo
 func (_mock *MockFacebookRepo) GetAccounts(ctx context.Context) ([]models.Account, error) {
 	ret := _mock.Called(ctx)

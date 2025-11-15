@@ -252,6 +252,7 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 	}
 
 	// Process messages
+	messages := make([]models.Message, 0, len(messageData.Messages))
 	for _, message := range messageData.Messages {
 		messageModel := models.Message{
 			BaseModel: models.BaseModel{ID: uuid.New().String()},
@@ -261,11 +262,12 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 			SentAt:    time.UnixMilli(int64(message.Timestamp)),
 		}
 		messageModel.UpdateTimestamps()
-		if err := u.facebookRepo.CreateMessage(ctx, messageModel); err != nil {
-			return err
-		}
+		messages = append(messages, messageModel)
 	}
 
+	if err := u.facebookRepo.CreateMessagesBulk(ctx, messages); err != nil {
+		return err
+	}
 	return nil
 }
 
