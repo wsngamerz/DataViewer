@@ -137,9 +137,7 @@ function ChatsPage() {
                 {/* Sidebar */}
                 <aside
                     style={{
-                        width: 300,
-                        minWidth: 220,
-                        maxWidth: 340,
+                        width: 420,
                         background: '#fff',
                         borderRight: '1px solid #e0e0e0',
                         padding: '2rem 1rem',
