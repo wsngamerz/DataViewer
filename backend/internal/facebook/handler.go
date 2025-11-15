@@ -155,31 +155,47 @@ func (h *handler) getMessages(ctx context.Context, _ *struct{}) (*GetMessagesRes
 }
 
 type GetMessagesByChatIDRequest struct {
-	ChatID string `path:"chatID" required:"true"`
-	Limit  int    `query:"limit" required:"false"`
-	Offset int    `query:"offset" required:"false"`
+	ChatID   string `path:"chatID" required:"true"`
+	Page     int    `query:"page" required:"false"`
+	PageSize int    `query:"pageSize" required:"false"`
 }
 
 type GetMessagesByChatIDResponse struct {
 	Body struct {
-		Messages []dtos.MessageDTO `json:"messages"`
-		Total    int               `json:"total"`
-		Limit    int               `json:"limit"`
-		Offset   int               `json:"offset"`
+		Messages  []dtos.MessageDTO `json:"messages"`
+		Total     int               `json:"total"`
+		Page      int               `json:"page"`
+		PageSize  int               `json:"pageSize"`
+		PageCount int               `json:"pageCount"`
 	}
 }
 
 func (h *handler) getMessagesByChatID(ctx context.Context, input *GetMessagesByChatIDRequest) (*GetMessagesByChatIDResponse, error) {
-	messages, total, err := h.facebookUseCase.GetMessagesByChatID(ctx, input.ChatID, input.Limit, input.Offset)
+	// Set defaults if not provided
+	page := input.Page
+	if page < 1 {
+		page = 1
+	}
+	pageSize := input.PageSize
+	if pageSize < 1 {
+		pageSize = 20 // default page size
+	}
+	offset := (page - 1) * pageSize
+	limit := pageSize
+
+	messages, total, err := h.facebookUseCase.GetMessagesByChatID(ctx, input.ChatID, limit, offset)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting facebook messages by chat ID")
 		return nil, err
 	}
 
+	pageCount := (total + pageSize - 1) / pageSize
+
 	response := &GetMessagesByChatIDResponse{}
 	response.Body.Messages = messages
 	response.Body.Total = total
-	response.Body.Limit = input.Limit
-	response.Body.Offset = input.Offset
+	response.Body.Page = page
+	response.Body.PageSize = pageSize
+	response.Body.PageCount = pageCount
 	return response, nil
 }

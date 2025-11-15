@@ -210,7 +210,7 @@ export const getApiFacebookMessagesByChatIdInfiniteOptions = (options: Options<G
             // @ts-ignore
             const page: Pick<QueryKey<Options<GetApiFacebookMessagesByChatIdData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
                 query: {
-                    offset: pageParam
+                    page: pageParam
                 }
             };
             const params = createInfiniteParams(queryKey, page);

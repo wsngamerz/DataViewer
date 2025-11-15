@@ -111,9 +111,10 @@ export type GetMessagesByChatIdResponseBody = {
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
-    limit: number;
     messages: Array<MessageDto> | null;
-    offset: number;
+    page: number;
+    pageCount: number;
+    pageSize: number;
     total: number;
 };
 
@@ -189,9 +190,10 @@ export type GetImportsResponseBodyWritable = {
 };
 
 export type GetMessagesByChatIdResponseBodyWritable = {
-    limit: number;
     messages: Array<MessageDto> | null;
-    offset: number;
+    page: number;
+    pageCount: number;
+    pageSize: number;
     total: number;
 };
 
@@ -360,8 +362,8 @@ export type GetApiFacebookMessagesByChatIdData = {
         chatID: string;
     };
     query?: {
-        limit?: number;
-        offset?: number;
+        page?: number;
+        pageSize?: number;
     };
     url: '/api/facebook/messages/{chatID}';
 };

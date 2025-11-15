@@ -6,6 +6,8 @@ import {getApiFacebookMessagesByChatIdInfiniteOptions, getApiFacebookChatsByIdOp
 import { getAvatarColor, getAvatarInitials } from '../lib/utils';
 import { useUser } from '../lib/user-context';
 
+const PAGE_SIZE = 100;
+
 export const Route = createFileRoute('/chats/$chatid')({
     component: ChatPage,
 });
@@ -49,9 +51,15 @@ function ChatPage() {
     } = useInfiniteQuery({
         ...getApiFacebookMessagesByChatIdInfiniteOptions({
             path: {chatID: chatid},
+            query: {pageSize: PAGE_SIZE},
         }),
-        getNextPageParam: (lastPage, _pages) => lastPage.total,
-        initialPageParam: 0,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, _allPages, lastPageParam) => {
+            return lastPage.page < lastPage.pageCount - 1 ? (lastPageParam as number) + 1 : undefined
+        },
+        getPreviousPageParam: (firstPage, _allPages, firstPageParam) => {
+            return firstPage.page > 0 ? (firstPageParam as number) - 1 : undefined
+        },
     });
 
     React.useEffect(() => {
