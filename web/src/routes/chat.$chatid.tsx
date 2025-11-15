@@ -119,7 +119,7 @@ function ChatPage() {
                                     <div style={{background: isOwn ? '#6366f1' : '#fff', color: isOwn ? '#fff' : '#222', borderRadius: 16, padding: '10px 16px', maxWidth: 420, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', position: 'relative'}}>
                                         <div style={{fontWeight: 500, fontSize: 13, marginBottom: 2}}>{msg.sender_id}</div>
                                         <div style={{fontSize: 15, wordBreak: 'break-word'}}>{msg.content}</div>
-                                        <div style={{fontSize: 11, color: isOwn ? '#d1d5db' : '#888', marginTop: 6, textAlign: 'right'}}>{new Date(msg.created_at).toLocaleString()}</div>
+                                        <div style={{fontSize: 11, color: isOwn ? '#d1d5db' : '#888', marginTop: 6, textAlign: 'right'}}>{new Date(msg.sent_at).toLocaleString()}</div>
                                     </div>
                                 </div>
                             );

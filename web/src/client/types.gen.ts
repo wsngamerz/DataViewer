@@ -138,6 +138,7 @@ export type MessageDto = {
     created_at: string;
     id: string;
     sender_id: string;
+    sent_at: string;
 };
 
 export type CreateImportResponseBodyWritable = {
