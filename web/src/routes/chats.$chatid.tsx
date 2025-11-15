@@ -10,6 +10,22 @@ export const Route = createFileRoute('/chats/$chatid')({
     component: ChatPage,
 });
 
+// Move groupMessages to outer scope
+function groupMessages(messages: MessageDto[]) {
+    const groups: { sender_id: string; messages: MessageDto[] }[] = [];
+    let currentGroup: { sender_id: string; messages: MessageDto[] } | null = null;
+    for (const msg of messages) {
+        if (!currentGroup || currentGroup.sender_id !== msg.sender_id) {
+            if (currentGroup) groups.push(currentGroup);
+            currentGroup = { sender_id: msg.sender_id, messages: [msg] };
+        } else {
+            currentGroup.messages.push(msg);
+        }
+    }
+    if (currentGroup) groups.push(currentGroup);
+    return groups;
+}
+
 function ChatPage() {
     const {chatid} = Route.useParams();
     const navigate = useNavigate();
@@ -55,6 +71,8 @@ function ChatPage() {
     const chat = chatData?.chat;
     const chatTitle = chat?.title || chatid;
     const participantNames = chat?.participant_ids || []; // the ids are actually names for now. this will be fixed when we have accounts data
+
+    const groupedMessages = groupMessages(allMessages);
 
     return (
         <div style={{height: 'calc(100dvh - 72px)', display: 'flex', flexDirection: 'column', background: '#f7f7fa'}}>
@@ -104,36 +122,79 @@ function ChatPage() {
                         No messages in this chat yet.
                     </div>
                 )}
-                {data?.pages.map((page) => (
-                    <React.Fragment key={page?.messages?.[0]?.id || Math.random()}>
-                        {page.messages?.map((msg: MessageDto) => {
-                            const isOwn = yourName && msg.sender_id === yourName;
-                            return (
-                                <div key={msg.id} style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-end', margin: '12px 24px'}}>
-                                    {/* Avatar */}
-                                    <div style={{width: 36, height: 36, borderRadius: '50%', background: getAvatarColor(msg.sender_id), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15, color: '#fff', margin: isOwn ? '0 0 0 12px' : '0 12px 0 0'}}>
-                                        {getAvatarInitials(msg.sender_id)}
-                                    </div>
-                                    {/* Message bubble */}
-                                    <div style={{
-                                        background: isOwn ? '#6366f1' : '#fff',
-                                        color: isOwn ? '#fff' : '#222',
-                                        borderRadius: 16,
-                                        padding: '10px 16px',
-                                        maxWidth: 420,
-                                        boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-                                        position: 'relative',
-                                        border: isOwn ? '1.5px solid #6366f1' : '1px solid #e5e7eb',
-                                    }}>
-                                        <div style={{fontWeight: 500, fontSize: 13, marginBottom: 2}}>{msg.sender_id}</div>
-                                        <div style={{fontSize: 15, wordBreak: 'break-word'}}>{msg.content}</div>
-                                        <div style={{fontSize: 11, color: isOwn ? '#d1d5db' : '#888', marginTop: 6, textAlign: 'right'}}>{new Date(msg.sent_at).toLocaleString()}</div>
-                                    </div>
+                {/* Render grouped messages */}
+                {groupedMessages.map((group) => {
+                    const isOwn = yourName && group.sender_id === yourName;
+                    return (
+                        <div key={group.messages[0].id + '-group'} style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-end', margin: '0 24px 12px 24px'}}>
+                            {/* Avatar and name only for first message in group */}
+                            <div style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-end'}}>
+                                <div style={{display: 'flex', flexDirection: 'column', alignItems: isOwn ? 'flex-end' : 'flex-start'}}>
+                                    {group.messages.map((msg, idx) => {
+                                        // Border radius logic
+                                        const isFirst = idx === 0;
+                                        const isLast = idx === group.messages.length - 1;
+                                        let borderStyle;
+                                        if (isOwn) {
+                                            borderStyle = {
+                                                borderTopRightRadius: isFirst ? 16 : 6,
+                                                borderBottomRightRadius: isLast ? 16 : 6,
+                                                borderTopLeftRadius: 16,
+                                                borderBottomLeftRadius: 16,
+                                            };
+                                        } else {
+                                            borderStyle = {
+                                                borderTopLeftRadius: isFirst ? 16 : 6,
+                                                borderBottomLeftRadius: isLast ? 16 : 6,
+                                                borderTopRightRadius: 16,
+                                                borderBottomRightRadius: 16,
+                                            };
+                                        }
+                                        // Refactor margin logic to avoid negated condition
+                                        let marginLeft = 0;
+                                        let marginRight = 0;
+                                        if (isOwn) {
+                                            marginRight = isFirst ? 0 : 48;
+                                        } else {
+                                            marginLeft = isFirst ? 0 : 48;
+                                        }
+                                        return (
+                                            <div key={msg.id} style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-end', marginTop: isFirst ? 0 : 2}}>
+                                                {/* Avatar only for first message in group */}
+                                                {isFirst && (
+                                                    <div style={{width: 36, height: 36, borderRadius: '50%', background: getAvatarColor(msg.sender_id), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15, color: '#fff', margin: isOwn ? '0 0 0 12px' : '0 12px 0 0'}}>
+                                                        {getAvatarInitials(msg.sender_id)}
+                                                    </div>
+                                                )}
+                                                {/* Message bubble */}
+                                                <div style={{
+                                                    background: isOwn ? '#6366f1' : '#fff',
+                                                    color: isOwn ? '#fff' : '#222',
+                                                    borderRadius: 16,
+                                                    padding: '10px 16px',
+                                                    maxWidth: 420,
+                                                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                                                    position: 'relative',
+                                                    border: isOwn ? '1.5px solid #6366f1' : '1px solid #e5e7eb',
+                                                    marginLeft,
+                                                    marginRight,
+                                                    ...borderStyle,
+                                                }}>
+                                                    {/* Name only for first message in group */}
+                                                    {isFirst && (
+                                                        <div style={{fontWeight: 500, fontSize: 13, marginBottom: 2}}>{msg.sender_id}</div>
+                                                    )}
+                                                    <div style={{fontSize: 15, wordBreak: 'break-word'}}>{msg.content}</div>
+                                                    <div style={{fontSize: 11, color: isOwn ? '#d1d5db' : '#888', marginTop: 6, textAlign: 'right'}}>{new Date(msg.sent_at).toLocaleString()}</div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                            );
-                        })}
-                    </React.Fragment>
-                ))}
+                            </div>
+                        </div>
+                    );
+                })}
                 {isFetchingNextPage && <div style={{textAlign: 'center', color: '#888', margin: 16}}>Loading more...</div>}
             </div>
         </div>
