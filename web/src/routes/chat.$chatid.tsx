@@ -2,7 +2,7 @@ import React, {useRef} from 'react';
 import {createFileRoute} from '@tanstack/react-router';
 import {useInfiniteQuery} from '@tanstack/react-query';
 import type {MessageDto} from '@/client/types.gen';
-import {getApiFacebookMessagesByChatIdOptions} from "@/client/@tanstack/react-query.gen.ts";
+import {getApiFacebookMessagesByChatIdInfiniteOptions} from "@/client/@tanstack/react-query.gen.ts";
 
 export const Route = createFileRoute('/chat/$chatid')({
     component: ChatPage,
@@ -20,12 +20,12 @@ function ChatPage() {
         status,
         error,
     } = useInfiniteQuery({
-        ...getApiFacebookMessagesByChatIdOptions({
+        ...getApiFacebookMessagesByChatIdInfiniteOptions({
             path: {
                 chatID: chatid,
             },
         }),
-        getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+        getNextPageParam: (lastPage, _pages) => lastPage.total,
         initialPageParam: 0,
     });
 
@@ -47,10 +47,10 @@ function ChatPage() {
         <div style={{height: '80vh', overflow: 'auto', display: 'flex', flexDirection: 'column-reverse'}}
              onScroll={handleScroll}>
             <div ref={bottomRef}/>
-            {status === 'error' && <div>Error: {error.message}</div>}
+            {status === 'error' && <div>Error: {JSON.stringify(error)}</div>}
             {data?.pages.map((page, i) => (
                 <React.Fragment key={i}>
-                    {page.map((msg: MessageDto) => (
+                    {page.messages?.map((msg: MessageDto) => (
                         <div key={msg.id}
                              style={{margin: '8px 0', alignSelf: msg.sender_id === chatid ? 'flex-end' : 'flex-start'}}>
                             <div style={{background: '#eee', borderRadius: 8, padding: 8, maxWidth: 400}}>
