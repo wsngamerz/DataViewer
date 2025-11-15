@@ -3,7 +3,7 @@ import {createFileRoute, useNavigate} from '@tanstack/react-router';
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import type {MessageDto} from '@/client/types.gen';
 import {
-    getApiFacebookChatsByIdOptions,
+    getApiFacebookChatsByIdSummaryOptions,
     getApiFacebookChatsByIdMessagesInfiniteOptions
 } from "@/client/@tanstack/react-query.gen.ts";
 import {getAvatarColor, getAvatarInitials} from '../lib/utils';
@@ -40,8 +40,7 @@ function ChatPage() {
     const isInitialLoad = useRef(true);
     const prevDataLength = useRef(0);
 
-    // Fetch chat details
-    const {data: chatData, status: chatStatus} = useQuery(getApiFacebookChatsByIdOptions({path: {id: chatid}}));
+    const {data: summaryData, status: summaryStatus} = useQuery(getApiFacebookChatsByIdSummaryOptions({path: {id: chatid}}));
 
     const {
         data,
@@ -99,9 +98,9 @@ function ChatPage() {
     const allMessages = (data?.pages.flatMap(page => page.messages || []) || [])
         .slice() // create a shallow copy to avoid mutating original
         .sort((a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()); // oldest first
-    const chat = chatData?.chat;
-    const chatTitle = chat?.title || chatid;
-    const participantNames = chat?.participant_ids || [];
+    const chatSummary = summaryData?.summary;
+    const chatTitle = chatSummary?.title || chatid;
+    const participantNames = chatSummary?.participant_ids?.map(x => x || "???") || [];
 
     const groupedMessages = groupMessages(allMessages);
 
@@ -115,53 +114,89 @@ function ChatPage() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 16,
-                position: 'relative'
+                position: 'relative',
+                justifyContent: 'space-between',
             }}>
-                {/* Back button */}
-                <button
-                    onClick={() => navigate({to: '/chats'})}
-                    aria-label="Back to chats"
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: 0,
-                        marginRight: 12,
+                {/* Left: Back button, avatar, title */}
+                <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
+                    <button
+                        onClick={() => navigate({to: '/chats'})}
+                        aria-label="Back to chats"
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            padding: 0,
+                            marginRight: 12,
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: 22,
+                            color: '#6366f1',
+                        }}
+                    >
+                        <span style={{fontSize: 22, lineHeight: 1, marginRight: 2}}>&larr;</span>
+                    </button>
+                    <div style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: '50%',
+                        background: '#d1d5db',
                         display: 'flex',
                         alignItems: 'center',
-                        fontSize: 22,
-                        color: '#6366f1',
-                    }}
-                >
-                    {/* Simple left arrow icon */}
-                    <span style={{fontSize: 22, lineHeight: 1, marginRight: 2}}>&larr;</span>
-                </button>
-                <div style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: '50%',
-                    background: '#d1d5db',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 700,
-                    fontSize: 18,
-                    color: '#444'
-                }}>
-                    {getAvatarInitials(chatTitle)}
+                        justifyContent: 'center',
+                        fontWeight: 700,
+                        fontSize: 18,
+                        color: '#444'
+                    }}>
+                        {getAvatarInitials(chatTitle)}
+                    </div>
+                    <div>
+                        <div style={{fontWeight: 600, fontSize: 18}}>{chatTitle}</div>
+                        <div style={{fontSize: 12, color: '#888'}}>Facebook Chat</div>
+                        {summaryStatus === 'pending' &&
+                            <div style={{fontSize: 12, color: '#aaa'}}>Loading chat details...</div>}
+                        {summaryStatus === 'error' && <div style={{fontSize: 12, color: 'red'}}>Error loading chat</div>}
+                    </div>
                 </div>
-                <div>
-                    <div style={{fontWeight: 600, fontSize: 18}}>{chatTitle}</div>
-                    <div style={{fontSize: 12, color: '#888'}}>Facebook Chat</div>
-                    {chatStatus === 'pending' &&
-                        <div style={{fontSize: 12, color: '#aaa'}}>Loading chat details...</div>}
-                    {chatStatus === 'error' && <div style={{fontSize: 12, color: 'red'}}>Error loading chat</div>}
-                    {chat && participantNames.length > 0 && (
-                        <div style={{fontSize: 13, color: '#666', marginTop: 2}}>
-                            Participants: {participantNames.join(', ')}
+                {/* Right: Participants, message count, created date with icons */}
+                {chatSummary && (
+                    <div style={{display: 'flex', alignItems: 'center', gap: 18, minWidth: 0, flex: 1, justifyContent: 'flex-end', flexWrap: 'wrap'}}>
+                        {/* Participants */}
+                        <div
+                            title={participantNames.length > 0 ? participantNames.join(', ') : undefined}
+                            style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666', minWidth: 0, flexWrap: 'wrap', width: 'auto'}}
+                        >
+                            <span aria-hidden="true">👥</span>
+                            <span style={{position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden'}}>Participants</span>
+                            <span style={{display: 'inline', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'normal', wordBreak: 'break-word'}}>
+                                {participantNames.length > 0 ? (
+                                    <>
+                                        {participantNames.slice(0, 4).map((x, i) => (
+                                            <span key={x}>
+                                                {x}{i < Math.min(participantNames.length, 4) - 1 ? ', ' : ''}
+                                            </span>
+                                        ))}
+                                        {participantNames.length > 4 && (
+                                            <span>+{participantNames.length - 4} more</span>
+                                        )}
+                                    </>
+                                ) : '—'}
+                            </span>
                         </div>
-                    )}
-                </div>
+                        {/* Message count */}
+                        <div title="Message count" style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666'}}>
+                            <span aria-hidden="true">💬</span>
+                            <span style={{position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden'}}>Messages</span>
+                            <span>{chatSummary.message_count}</span>
+                        </div>
+                        {/* Created date */}
+                        <div title="Created" style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666'}}>
+                            <span aria-hidden="true">📅</span>
+                            <span style={{position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden'}}>Created</span>
+                            <span>{chatSummary.estimated_created_at ? new Date(chatSummary.estimated_created_at).toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'}) : '—'}</span>
+                        </div>
+                    </div>
+                )}
 
                 {isFetchingNextPage && (
                     <div style={{
