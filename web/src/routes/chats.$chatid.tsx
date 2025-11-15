@@ -159,7 +159,7 @@ function ChatPage() {
                                             marginLeft = isFirst ? 0 : 48;
                                         }
                                         return (
-                                            <div key={msg.id} style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-end', marginTop: isFirst ? 0 : 2}}>
+                                            <div key={msg.id} style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-start', marginTop: isFirst ? 0 : 2}}>
                                                 {/* Avatar only for first message in group */}
                                                 {isFirst && (
                                                     <div style={{width: 36, height: 36, borderRadius: '50%', background: getAvatarColor(msg.sender_id), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15, color: '#fff', margin: isOwn ? '0 0 0 12px' : '0 12px 0 0'}}>
