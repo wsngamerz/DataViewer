@@ -2,9 +2,12 @@ import React, {useRef} from 'react';
 import {createFileRoute, useNavigate} from '@tanstack/react-router';
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import type {MessageDto} from '@/client/types.gen';
-import {getApiFacebookMessagesByChatIdInfiniteOptions, getApiFacebookChatsByIdOptions} from "@/client/@tanstack/react-query.gen.ts";
-import { getAvatarColor, getAvatarInitials } from '../lib/utils';
-import { useUser } from '../lib/user-context';
+import {
+    getApiFacebookChatsByIdOptions,
+    getApiFacebookMessagesByChatIdInfiniteOptions
+} from "@/client/@tanstack/react-query.gen.ts";
+import {getAvatarColor, getAvatarInitials} from '../lib/utils';
+import {useUser} from '../lib/user-context';
 
 const PAGE_SIZE = 100;
 
@@ -19,7 +22,7 @@ function groupMessages(messages: MessageDto[]) {
     for (const msg of messages) {
         if (!currentGroup || currentGroup.sender_id !== msg.sender_id) {
             if (currentGroup) groups.push(currentGroup);
-            currentGroup = { sender_id: msg.sender_id, messages: [msg] };
+            currentGroup = {sender_id: msg.sender_id, messages: [msg]};
         } else {
             currentGroup.messages.push(msg);
         }
@@ -31,15 +34,13 @@ function groupMessages(messages: MessageDto[]) {
 function ChatPage() {
     const {chatid} = Route.useParams();
     const navigate = useNavigate();
-    const bottomRef = useRef<HTMLDivElement>(null);
-    const { name: yourName } = useUser();
+    const chatBodyRef = useRef<HTMLDivElement>(null);
+    const {name: yourName} = useUser();
+    const isInitialLoad = useRef(true);
+    const prevDataLength = useRef(0);
 
     // Fetch chat details
-    const {data: chatData, status: chatStatus} = useQuery(
-        getApiFacebookChatsByIdOptions({
-            path: {id: chatid},
-        })
-    );
+    const {data: chatData, status: chatStatus} = useQuery(getApiFacebookChatsByIdOptions({path: {id: chatid}}));
 
     const {
         data,
@@ -55,39 +56,65 @@ function ChatPage() {
         }),
         initialPageParam: 1,
         getNextPageParam: (lastPage, _allPages, lastPageParam) => {
-            return lastPage.page < lastPage.pageCount - 1 ? (lastPageParam as number) + 1 : undefined
+            return lastPage.page < lastPage.pageCount ? (lastPageParam as number) + 1 : undefined
         },
         getPreviousPageParam: (firstPage, _allPages, firstPageParam) => {
-            return firstPage.page > 0 ? (firstPageParam as number) - 1 : undefined
+            return firstPage.page > 1 ? (firstPageParam as number) - 1 : undefined
         },
     });
 
+    // Scroll to bottom on initial load or when a new message is sent
     React.useEffect(() => {
-        if (bottomRef.current) {
-            bottomRef.current.scrollIntoView({behavior: 'smooth'});
+        const chatBody = chatBodyRef.current;
+        if (!chatBody) return;
+        const allMessages = data?.pages.flatMap(page => page.messages || []) || [];
+        if (isInitialLoad.current) {
+            chatBody.scrollTop = chatBody.scrollHeight;
+            isInitialLoad.current = false;
+        } else if (prevDataLength.current < allMessages.length) {
+            // New message sent (not older messages loaded)
+            chatBody.scrollTop = chatBody.scrollHeight;
         }
+        prevDataLength.current = allMessages.length;
     }, [data]);
 
+    // Maintain scroll position when loading older messages
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const {scrollTop} = e.currentTarget;
-        if (scrollTop === 0 && hasNextPage && !isFetchingNextPage) {
-            fetchNextPage();
+        const chatBody = e.currentTarget;
+        if (chatBody.scrollTop === 0 && hasNextPage && !isFetchingNextPage) {
+            const prevScrollHeight = chatBody.scrollHeight;
+            fetchNextPage().then(() => {
+                // After loading, adjust scrollTop so user stays at the same message
+                setTimeout(() => {
+                    if (chatBodyRef.current) {
+                        const newScrollHeight = chatBodyRef.current.scrollHeight;
+                        chatBodyRef.current.scrollTop = newScrollHeight - prevScrollHeight;
+                    }
+                }, 0);
+            });
         }
     };
 
     const allMessages = (data?.pages.flatMap(page => page.messages || []) || [])
         .slice() // create a shallow copy to avoid mutating original
-        .sort((a, b) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime());
+        .sort((a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()); // oldest first
     const chat = chatData?.chat;
     const chatTitle = chat?.title || chatid;
-    const participantNames = chat?.participant_ids || []; // the ids are actually names for now. this will be fixed when we have accounts data
+    const participantNames = chat?.participant_ids || [];
 
     const groupedMessages = groupMessages(allMessages);
 
     return (
         <div style={{height: 'calc(100dvh - 72px)', display: 'flex', flexDirection: 'column', background: '#f7f7fa'}}>
             {/* Header */}
-            <div style={{padding: '16px', background: '#fff', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', gap: 16}}>
+            <div style={{
+                padding: '16px',
+                background: '#fff',
+                borderBottom: '1px solid #eee',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 16
+            }}>
                 {/* Back button */}
                 <button
                     onClick={() => navigate({to: '/chats'})}
@@ -107,13 +134,25 @@ function ChatPage() {
                     {/* Simple left arrow icon */}
                     <span style={{fontSize: 22, lineHeight: 1, marginRight: 2}}>&larr;</span>
                 </button>
-                <div style={{width: 40, height: 40, borderRadius: '50%', background: '#d1d5db', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18, color: '#444'}}>
+                <div style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    background: '#d1d5db',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 700,
+                    fontSize: 18,
+                    color: '#444'
+                }}>
                     {getAvatarInitials(chatTitle)}
                 </div>
                 <div>
                     <div style={{fontWeight: 600, fontSize: 18}}>{chatTitle}</div>
                     <div style={{fontSize: 12, color: '#888'}}>Facebook Chat</div>
-                    {chatStatus === 'pending' && <div style={{fontSize: 12, color: '#aaa'}}>Loading chat details...</div>}
+                    {chatStatus === 'pending' &&
+                        <div style={{fontSize: 12, color: '#aaa'}}>Loading chat details...</div>}
                     {chatStatus === 'error' && <div style={{fontSize: 12, color: 'red'}}>Error loading chat</div>}
                     {chat && participantNames.length > 0 && (
                         <div style={{fontSize: 13, color: '#666', marginTop: 2}}>
@@ -124,9 +163,11 @@ function ChatPage() {
             </div>
 
             {/* Chat body */}
-            <div style={{flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column-reverse', padding: '24px 0'}} onScroll={handleScroll}>
-                <div ref={bottomRef}/>
-                {status === 'error' && <div style={{color: 'red', textAlign: 'center'}}>Error: {JSON.stringify(error)}</div>}
+            <div ref={chatBodyRef}
+                 style={{flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', padding: '24px 0'}}
+                 onScroll={handleScroll}>
+                {status === 'error' &&
+                    <div style={{color: 'red', textAlign: 'center'}}>Error: {JSON.stringify(error)}</div>}
                 {allMessages.length === 0 && status === 'success' && (
                     <div style={{textAlign: 'center', color: '#888', marginTop: 40, fontSize: 16}}>
                         No messages in this chat yet.
@@ -136,10 +177,23 @@ function ChatPage() {
                 {groupedMessages.map((group) => {
                     const isOwn = yourName && group.sender_id === yourName;
                     return (
-                        <div key={group.messages[0].id + '-group'} style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-end', margin: '0 24px 12px 24px'}}>
+                        <div key={group.messages[0].id + '-group'} style={{
+                            display: 'flex',
+                            flexDirection: isOwn ? 'row-reverse' : 'row',
+                            alignItems: 'flex-end',
+                            margin: '0 24px 12px 24px'
+                        }}>
                             {/* Avatar and name only for first message in group */}
-                            <div style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-end'}}>
-                                <div style={{display: 'flex', flexDirection: 'column', alignItems: isOwn ? 'flex-end' : 'flex-start'}}>
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: isOwn ? 'row-reverse' : 'row',
+                                alignItems: 'flex-end'
+                            }}>
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: isOwn ? 'flex-end' : 'flex-start'
+                                }}>
                                     {group.messages.map((msg, idx) => {
                                         // Border radius logic
                                         const isFirst = idx === 0;
@@ -169,10 +223,27 @@ function ChatPage() {
                                             marginLeft = isFirst ? 0 : 48;
                                         }
                                         return (
-                                            <div key={msg.id} style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-start', marginTop: isFirst ? 0 : 2}}>
+                                            <div key={msg.id} style={{
+                                                display: 'flex',
+                                                flexDirection: isOwn ? 'row-reverse' : 'row',
+                                                alignItems: 'flex-start',
+                                                marginTop: isFirst ? 0 : 2
+                                            }}>
                                                 {/* Avatar only for first message in group */}
                                                 {isFirst && (
-                                                    <div style={{width: 36, height: 36, borderRadius: '50%', background: getAvatarColor(msg.sender_id), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15, color: '#fff', margin: isOwn ? '0 0 0 12px' : '0 12px 0 0'}}>
+                                                    <div style={{
+                                                        width: 36,
+                                                        height: 36,
+                                                        borderRadius: '50%',
+                                                        background: getAvatarColor(msg.sender_id),
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        fontWeight: 700,
+                                                        fontSize: 15,
+                                                        color: '#fff',
+                                                        margin: isOwn ? '0 0 0 12px' : '0 12px 0 0'
+                                                    }}>
                                                         {getAvatarInitials(msg.sender_id)}
                                                     </div>
                                                 )}
@@ -192,10 +263,22 @@ function ChatPage() {
                                                 }}>
                                                     {/* Name only for first message in group */}
                                                     {isFirst && (
-                                                        <div style={{fontWeight: 500, fontSize: 13, marginBottom: 2}}>{msg.sender_id}</div>
+                                                        <div style={{
+                                                            fontWeight: 500,
+                                                            fontSize: 13,
+                                                            marginBottom: 2
+                                                        }}>{msg.sender_id}</div>
                                                     )}
-                                                    <div style={{fontSize: 15, wordBreak: 'break-word'}}>{msg.content}</div>
-                                                    <div style={{fontSize: 11, color: isOwn ? '#d1d5db' : '#888', marginTop: 6, textAlign: 'right'}}>{new Date(msg.sent_at).toLocaleString()}</div>
+                                                    <div style={{
+                                                        fontSize: 15,
+                                                        wordBreak: 'break-word'
+                                                    }}>{msg.content}</div>
+                                                    <div style={{
+                                                        fontSize: 11,
+                                                        color: isOwn ? '#d1d5db' : '#888',
+                                                        marginTop: 6,
+                                                        textAlign: 'right'
+                                                    }}>{new Date(msg.sent_at).toLocaleString()}</div>
                                                 </div>
                                             </div>
                                         );
@@ -205,7 +288,8 @@ function ChatPage() {
                         </div>
                     );
                 })}
-                {isFetchingNextPage && <div style={{textAlign: 'center', color: '#888', margin: 16}}>Loading more...</div>}
+                {isFetchingNextPage &&
+                    <div style={{textAlign: 'center', color: '#888', margin: 16}}>Loading more...</div>}
             </div>
         </div>
     );
