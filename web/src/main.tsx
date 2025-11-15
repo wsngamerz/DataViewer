@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
-
+import { client } from './client/client.gen';
 import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx'
 
 // Import the generated route tree
@@ -30,6 +30,10 @@ declare module '@tanstack/react-router' {
     router: typeof router
   }
 }
+
+client.setConfig({
+    baseUrl: 'http://localhost:8080',
+});
 
 // Render the app
 const rootElement = document.getElementById('app')
