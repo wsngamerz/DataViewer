@@ -5,8 +5,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/wsngamerz/dataviewer/internal/config"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 // DataSources holds the data sources (clients) used by the service.
@@ -30,7 +30,7 @@ func NewDataSources(cfg *config.Config) (*DataSources, error) {
 }
 
 func InitMongo(cfg config.Mongo) (*mongo.Client, error) {
-	mongoClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI(cfg.ConnectionString))
+	mongoClient, err := mongo.Connect(options.Client().ApplyURI(cfg.ConnectionString))
 	if err != nil {
 		return nil, err
 	}
