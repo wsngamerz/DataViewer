@@ -34,5 +34,6 @@ type MessageDTO struct {
 	SenderID string `json:"sender_id"`
 	Content  string `json:"content"`
 
+	SentAt    time.Time `json:"sent_at"`
 	CreatedAt time.Time `json:"created_at"`
 }

@@ -382,6 +382,10 @@
           },
           "sender_id": {
             "type": "string"
+          },
+          "sent_at": {
+            "format": "date-time",
+            "type": "string"
           }
         },
         "required": [
@@ -389,6 +393,7 @@
           "chat_id",
           "sender_id",
           "content",
+          "sent_at",
           "created_at"
         ],
         "type": "object"

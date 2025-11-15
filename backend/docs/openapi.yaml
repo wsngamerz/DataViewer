@@ -275,11 +275,15 @@ components:
           type: string
         sender_id:
           type: string
+        sent_at:
+          format: date-time
+          type: string
       required:
         - id
         - chat_id
         - sender_id
         - content
+        - sent_at
         - created_at
       type: object
 info:

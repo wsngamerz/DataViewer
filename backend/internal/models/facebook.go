@@ -57,9 +57,10 @@ func (c Chat) ToDTO() dtos.ChatDTO {
 
 type Message struct {
 	BaseModel `bson:",inline"`
-	Content   string `bson:"content"`
-	SenderID  string `bson:"senderId"`
-	ChatID    string `bson:"chatId"`
+	Content   string    `bson:"content"`
+	SentAt    time.Time `bson:"sentAt"`
+	SenderID  string    `bson:"senderId"`
+	ChatID    string    `bson:"chatId"`
 }
 
 func (m Message) ToDTO() dtos.MessageDTO {
@@ -68,6 +69,7 @@ func (m Message) ToDTO() dtos.MessageDTO {
 		Content:   m.Content,
 		SenderID:  m.SenderID,
 		ChatID:    m.ChatID,
+		SentAt:    m.SentAt,
 		CreatedAt: m.CreatedAt,
 	}
 }

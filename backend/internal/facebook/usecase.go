@@ -17,7 +17,7 @@ import (
 	"github.com/wsngamerz/dataviewer/internal/models"
 )
 
-var messageFilePattern = regexp.MustCompile(`^your_facebook_activity/messages/(inbox|archived_threads|e2ee_cutover)/([^/]+)/message_(\d+)\.json$`)
+var messageFilePattern = regexp.MustCompile(`^messages/(inbox|archived_threads|e2ee_cutover)/([^/]+)/message_(\d+)\.json$`)
 
 type usecase struct {
 	facebookRepo domain.FacebookRepo
@@ -258,6 +258,7 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 			ChatID:    chatModel.ID,
 			SenderID:  message.SenderName, // TODO: Map sender name to ID properly
 			Content:   message.Content,
+			SentAt:    time.UnixMilli(int64(message.Timestamp)),
 		}
 		messageModel.UpdateTimestamps()
 		if err := u.facebookRepo.CreateMessage(ctx, messageModel); err != nil {
