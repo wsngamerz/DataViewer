@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ChatsRouteImport } from './routes/chats'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChatsIndexRouteImport } from './routes/chats.index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
 import { Route as DemoStorybookRouteImport } from './routes/demo/storybook'
@@ -27,6 +28,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ChatsIndexRoute = ChatsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ChatsRoute,
 } as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   id: '/demo/tanstack-query',
@@ -66,16 +72,17 @@ export interface FileRoutesByFullPath {
   '/demo/storybook': typeof DemoStorybookRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/chats/': typeof ChatsIndexRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/chats': typeof ChatsRouteWithChildren
   '/chats/$chatid': typeof ChatsChatidRoute
   '/demo/storybook': typeof DemoStorybookRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/chats': typeof ChatsIndexRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
 }
@@ -87,6 +94,7 @@ export interface FileRoutesById {
   '/demo/storybook': typeof DemoStorybookRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/chats/': typeof ChatsIndexRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
 }
@@ -99,16 +107,17 @@ export interface FileRouteTypes {
     | '/demo/storybook'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/chats/'
     | '/demo/form/address'
     | '/demo/form/simple'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/chats'
     | '/chats/$chatid'
     | '/demo/storybook'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/chats'
     | '/demo/form/address'
     | '/demo/form/simple'
   id:
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/demo/storybook'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/chats/'
     | '/demo/form/address'
     | '/demo/form/simple'
   fileRoutesById: FileRoutesById
@@ -148,6 +158,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/chats/': {
+      id: '/chats/'
+      path: '/'
+      fullPath: '/chats/'
+      preLoaderRoute: typeof ChatsIndexRouteImport
+      parentRoute: typeof ChatsRoute
     }
     '/demo/tanstack-query': {
       id: '/demo/tanstack-query'
@@ -196,10 +213,12 @@ declare module '@tanstack/react-router' {
 
 interface ChatsRouteChildren {
   ChatsChatidRoute: typeof ChatsChatidRoute
+  ChatsIndexRoute: typeof ChatsIndexRoute
 }
 
 const ChatsRouteChildren: ChatsRouteChildren = {
   ChatsChatidRoute: ChatsChatidRoute,
+  ChatsIndexRoute: ChatsIndexRoute,
 }
 
 const ChatsRouteWithChildren = ChatsRoute._addFileChildren(ChatsRouteChildren)
