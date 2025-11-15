@@ -4,6 +4,7 @@ import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import type {MessageDto} from '@/client/types.gen';
 import {getApiFacebookMessagesByChatIdInfiniteOptions, getApiFacebookChatsByIdOptions} from "@/client/@tanstack/react-query.gen.ts";
 import { getAvatarColor, getAvatarInitials } from '../lib/utils';
+import { useUser } from '../lib/user-context';
 
 export const Route = createFileRoute('/chats/$chatid')({
     component: ChatPage,
@@ -13,6 +14,7 @@ function ChatPage() {
     const {chatid} = Route.useParams();
     const navigate = useNavigate();
     const bottomRef = useRef<HTMLDivElement>(null);
+    const { name: yourName } = useUser();
 
     // Fetch chat details
     const {data: chatData, status: chatStatus} = useQuery(
@@ -105,7 +107,7 @@ function ChatPage() {
                 {data?.pages.map((page) => (
                     <React.Fragment key={page?.messages?.[0]?.id || Math.random()}>
                         {page.messages?.map((msg: MessageDto) => {
-                            const isOwn = msg.sender_id === chatid;
+                            const isOwn = yourName && msg.sender_id === yourName;
                             return (
                                 <div key={msg.id} style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-end', margin: '12px 24px'}}>
                                     {/* Avatar */}
@@ -113,7 +115,16 @@ function ChatPage() {
                                         {getAvatarInitials(msg.sender_id)}
                                     </div>
                                     {/* Message bubble */}
-                                    <div style={{background: isOwn ? '#6366f1' : '#fff', color: isOwn ? '#fff' : '#222', borderRadius: 16, padding: '10px 16px', maxWidth: 420, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', position: 'relative'}}>
+                                    <div style={{
+                                        background: isOwn ? '#6366f1' : '#fff',
+                                        color: isOwn ? '#fff' : '#222',
+                                        borderRadius: 16,
+                                        padding: '10px 16px',
+                                        maxWidth: 420,
+                                        boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                                        position: 'relative',
+                                        border: isOwn ? '1.5px solid #6366f1' : '1px solid #e5e7eb',
+                                    }}>
                                         <div style={{fontWeight: 500, fontSize: 13, marginBottom: 2}}>{msg.sender_id}</div>
                                         <div style={{fontSize: 15, wordBreak: 'break-word'}}>{msg.content}</div>
                                         <div style={{fontSize: 11, color: isOwn ? '#d1d5db' : '#888', marginTop: 6, textAlign: 'right'}}>{new Date(msg.sent_at).toLocaleString()}</div>

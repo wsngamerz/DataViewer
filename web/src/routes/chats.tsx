@@ -3,10 +3,35 @@ import { useQuery } from '@tanstack/react-query';
 import { getApiFacebookChatsOptions } from '@/client/@tanstack/react-query.gen';
 import type { ChatDto } from '@/client/types.gen';
 import { getAvatarColor, getAvatarInitials } from '../lib/utils';
+import { UserProvider, useUser } from '../lib/user-context';
 
 export const Route = createFileRoute('/chats')({
     component: ChatsPage,
 });
+
+function NameSelector() {
+  const { name, setName } = useUser();
+  return (
+    <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <label htmlFor="your-name" style={{ fontSize: 13, color: '#888', marginBottom: 2 }}>Your Name</label>
+      <input
+        id="your-name"
+        type="text"
+        value={name}
+        onChange={e => setName(e.target.value)}
+        placeholder="Type your name..."
+        style={{
+          padding: '6px 10px',
+          borderRadius: 6,
+          border: '1px solid #e0e0e0',
+          fontSize: 15,
+          outline: 'none',
+          width: '100%',
+        }}
+      />
+    </div>
+  );
+}
 
 function ChatsPage() {
     // Fetch chats using the generated TanStack Query client
@@ -17,6 +42,7 @@ function ChatsPage() {
     if (error) return <div>Error loading chats</div>;
 
     return (
+        <UserProvider>
         <div
             style={{
                 display: 'flex',
@@ -42,6 +68,7 @@ function ChatsPage() {
                     minHeight: 0,
                 }}
             >
+                <NameSelector />
                 <h1 style={{ marginBottom: '1.5rem', fontSize: '1.3rem' }}>Chats</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     {chats.length === 0 && <div>No chats found.</div>}
@@ -104,5 +131,6 @@ function ChatsPage() {
                 <Outlet />
             </main>
         </div>
+        </UserProvider>
     );
 }
