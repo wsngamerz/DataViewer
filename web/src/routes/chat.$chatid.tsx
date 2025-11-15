@@ -12,6 +12,30 @@ function getInitials(senderId: string) {
     return senderId?.slice(0, 2).toUpperCase();
 }
 
+// Utility to generate a consistent color from a string (senderId)
+function getAvatarColor(senderId: string): string {
+    // Simple hash function to get a number from the string
+    let hash = 0;
+    for (let i = 0; i < senderId.length; i++) {
+        hash = senderId.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    // Generate color from hash
+    const colors = [
+        '#fbbf24', // amber
+        '#a5b4fc', // indigo
+        '#34d399', // green
+        '#f472b6', // pink
+        '#60a5fa', // blue
+        '#f87171', // red
+        '#facc15', // yellow
+        '#38bdf8', // sky
+        '#c084fc', // purple
+        '#fb7185', // rose
+    ];
+    const idx = Math.abs(hash) % colors.length;
+    return colors[idx];
+}
+
 function ChatPage() {
     const {chatid} = Route.useParams();
     const navigate = useNavigate();
@@ -112,7 +136,7 @@ function ChatPage() {
                             return (
                                 <div key={msg.id} style={{display: 'flex', flexDirection: isOwn ? 'row-reverse' : 'row', alignItems: 'flex-end', margin: '12px 24px'}}>
                                     {/* Avatar */}
-                                    <div style={{width: 36, height: 36, borderRadius: '50%', background: isOwn ? '#a5b4fc' : '#fbbf24', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15, color: '#fff', margin: isOwn ? '0 0 0 12px' : '0 12px 0 0'}}>
+                                    <div style={{width: 36, height: 36, borderRadius: '50%', background: getAvatarColor(msg.sender_id), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15, color: '#fff', margin: isOwn ? '0 0 0 12px' : '0 12px 0 0'}}>
                                         {getInitials(msg.sender_id)}
                                     </div>
                                     {/* Message bubble */}
