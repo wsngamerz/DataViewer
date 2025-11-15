@@ -34,7 +34,7 @@ func TestFixMessageEncoding(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := fixMessageEncoding(tt.input)
+			got := fixTextEncoding(tt.input)
 			if got != tt.want {
 				t.Fatalf("\nTest case: %s\nInput:    %q\nExpected: %q\nGot:      %q\n", tt.name, tt.input, tt.want, got)
 			} else {

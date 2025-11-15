@@ -241,7 +241,7 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 
 		newChatModel := models.Chat{
 			BaseModel:      models.BaseModel{ID: uuid.New().String()},
-			Title:          messageData.Title,
+			Title:          fixTextEncoding(messageData.Title),
 			ParticipantIDs: participantIDs,
 			ThreadPath:     messageData.ThreadPath,
 		}
@@ -259,7 +259,7 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 			BaseModel: models.BaseModel{ID: uuid.New().String()},
 			ChatID:    chatModel.ID,
 			SenderID:  message.SenderName, // TODO: Map sender name to ID properly
-			Content:   fixMessageEncoding(message.Content),
+			Content:   fixTextEncoding(message.Content),
 			SentAt:    time.UnixMilli(int64(message.Timestamp)),
 		}
 		messageModel.UpdateTimestamps()
@@ -290,9 +290,9 @@ func createImportFromDTO(input domain.CreateFacebookImport) (models.Import, erro
 	return model, nil
 }
 
-// fixMessageEncoding does some fancy magic here to make sure that the content is correctly encoded to utf8 cause fb
+// fixTextEncoding does some fancy magic here to make sure that the content is correctly encoded to utf8 cause fb
 // does some weird ass shit to strings in the data exports
-func fixMessageEncoding(s string) string {
+func fixTextEncoding(s string) string {
 	// Convert each rune ≤ 0xFF to its raw byte
 	raw := []byte{}
 	for _, r := range s {
