@@ -1,6 +1,6 @@
 import {createFileRoute, Link, Outlet, useMatch} from '@tanstack/react-router';
-import {useQuery} from '@tanstack/react-query';
-import {getApiFacebookChatsOptions} from '@/client/@tanstack/react-query.gen';
+import {useQuery, useQueries} from '@tanstack/react-query';
+import {getApiFacebookChatsOptions, getApiFacebookChatsByIdSummaryOptions} from '@/client/@tanstack/react-query.gen';
 import type {ChatDto} from '@/client/types.gen';
 import {getAvatarColor, getAvatarInitials} from '../lib/utils';
 import {UserProvider, useUser} from '../lib/user-context';
@@ -121,6 +121,18 @@ function ChatsPage() {
     const match = useMatch({from: '/chats/$chatid', shouldThrow: false});
     const activeChatId = match?.params?.chatid;
 
+    // Fetch summaries for all chats
+    const summaryQueries = useQueries({
+        queries: chats.map(chat => {
+            const options = getApiFacebookChatsByIdSummaryOptions({ path: { id: chat.id } });
+            return {
+                queryKey: options.queryKey,
+                queryFn: options.queryFn,
+                enabled: !!chat.id,
+            };
+        })
+    });
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading chats</div>;
 
@@ -179,8 +191,10 @@ function ChatsPage() {
                     <nav style={{display: 'flex', flexDirection: 'column', gap: 0}}>
                         {chats.length === 0 &&
                             <div style={{color: '#aaa', textAlign: 'center', marginTop: 32}}>No chats found.</div>}
-                        {chats.map((chat) => {
+                        {chats.map((chat, idx) => {
                             const isActive = activeChatId === chat.id;
+                            const summaryQuery = summaryQueries[idx];
+                            const summary = summaryQuery?.data?.summary;
                             return (
                                 <Link
                                     key={chat.id}
@@ -235,8 +249,29 @@ function ChatsPage() {
                                         fontSize: '0.93rem',
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
-                                        textOverflow: 'ellipsis'
-                                    }}>Created: {chat.created_at ? new Date(chat.created_at).toLocaleString() : 'Unknown'}</span>
+                                        textOverflow: 'ellipsis',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 8,
+                                    }}>
+                                        {/* Message count */}
+                                        {summaryQuery.isLoading ? 'Loading…' : summaryQuery.isError ? 'Error' : (
+                                            <>
+                                                <span title="Message count">{summary?.message_count ?? 0} msgs</span>
+                                                {/* Last message */}
+                                                {summary?.last_message ? (
+                                                    <span style={{color: '#aaa', fontSize: '0.9em'}}>
+                                                        • {summary.last_message.content ? summary.last_message.content.slice(0, 32) : '[No content]'}
+                                                        {summary.last_message.sent_at && (
+                                                            <span style={{marginLeft: 6, color: '#bbb', fontSize: '0.85em'}}>
+                                                                ({new Date(summary.last_message.sent_at).toLocaleString()})
+                                                            </span>
+                                                        )}
+                                                    </span>
+                                                ) : null}
+                                            </>
+                                        )}
+                                    </span>
                                 </span>
                                     {/* Unread dot or other indicators could go here */}
                                 </Link>
