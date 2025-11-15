@@ -776,8 +776,8 @@ func (_c *MockFacebookRepo_GetMessages_Call) RunAndReturn(run func(ctx context.C
 }
 
 // GetMessagesByChatID provides a mock function for the type MockFacebookRepo
-func (_mock *MockFacebookRepo) GetMessagesByChatID(ctx context.Context, chatID string, limit int, offset int) ([]models.Message, int, error) {
-	ret := _mock.Called(ctx, chatID, limit, offset)
+func (_mock *MockFacebookRepo) GetMessagesByChatID(ctx context.Context, chatID string, page int, pageSize int) ([]models.Message, int, error) {
+	ret := _mock.Called(ctx, chatID, page, pageSize)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetMessagesByChatID")
@@ -787,22 +787,22 @@ func (_mock *MockFacebookRepo) GetMessagesByChatID(ctx context.Context, chatID s
 	var r1 int
 	var r2 error
 	if returnFunc, ok := ret.Get(0).(func(context.Context, string, int, int) ([]models.Message, int, error)); ok {
-		return returnFunc(ctx, chatID, limit, offset)
+		return returnFunc(ctx, chatID, page, pageSize)
 	}
 	if returnFunc, ok := ret.Get(0).(func(context.Context, string, int, int) []models.Message); ok {
-		r0 = returnFunc(ctx, chatID, limit, offset)
+		r0 = returnFunc(ctx, chatID, page, pageSize)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]models.Message)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, string, int, int) int); ok {
-		r1 = returnFunc(ctx, chatID, limit, offset)
+		r1 = returnFunc(ctx, chatID, page, pageSize)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 	if returnFunc, ok := ret.Get(2).(func(context.Context, string, int, int) error); ok {
-		r2 = returnFunc(ctx, chatID, limit, offset)
+		r2 = returnFunc(ctx, chatID, page, pageSize)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -817,13 +817,13 @@ type MockFacebookRepo_GetMessagesByChatID_Call struct {
 // GetMessagesByChatID is a helper method to define mock.On call
 //   - ctx context.Context
 //   - chatID string
-//   - limit int
-//   - offset int
-func (_e *MockFacebookRepo_Expecter) GetMessagesByChatID(ctx interface{}, chatID interface{}, limit interface{}, offset interface{}) *MockFacebookRepo_GetMessagesByChatID_Call {
-	return &MockFacebookRepo_GetMessagesByChatID_Call{Call: _e.mock.On("GetMessagesByChatID", ctx, chatID, limit, offset)}
+//   - page int
+//   - pageSize int
+func (_e *MockFacebookRepo_Expecter) GetMessagesByChatID(ctx interface{}, chatID interface{}, page interface{}, pageSize interface{}) *MockFacebookRepo_GetMessagesByChatID_Call {
+	return &MockFacebookRepo_GetMessagesByChatID_Call{Call: _e.mock.On("GetMessagesByChatID", ctx, chatID, page, pageSize)}
 }
 
-func (_c *MockFacebookRepo_GetMessagesByChatID_Call) Run(run func(ctx context.Context, chatID string, limit int, offset int)) *MockFacebookRepo_GetMessagesByChatID_Call {
+func (_c *MockFacebookRepo_GetMessagesByChatID_Call) Run(run func(ctx context.Context, chatID string, page int, pageSize int)) *MockFacebookRepo_GetMessagesByChatID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -856,7 +856,7 @@ func (_c *MockFacebookRepo_GetMessagesByChatID_Call) Return(messages []models.Me
 	return _c
 }
 
-func (_c *MockFacebookRepo_GetMessagesByChatID_Call) RunAndReturn(run func(ctx context.Context, chatID string, limit int, offset int) ([]models.Message, int, error)) *MockFacebookRepo_GetMessagesByChatID_Call {
+func (_c *MockFacebookRepo_GetMessagesByChatID_Call) RunAndReturn(run func(ctx context.Context, chatID string, page int, pageSize int) ([]models.Message, int, error)) *MockFacebookRepo_GetMessagesByChatID_Call {
 	_c.Call.Return(run)
 	return _c
 }

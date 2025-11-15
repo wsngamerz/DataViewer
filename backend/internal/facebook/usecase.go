@@ -94,8 +94,8 @@ func (u usecase) GetMessages(ctx context.Context) ([]dtos.MessageDTO, error) {
 	return models.ToDTOs(messages), nil
 }
 
-func (u usecase) GetMessagesByChatID(ctx context.Context, chatID string, limit int, offset int) ([]dtos.MessageDTO, int, error) {
-	messages, total, err := u.facebookRepo.GetMessagesByChatID(ctx, chatID, limit, offset)
+func (u usecase) GetMessagesByChatID(ctx context.Context, chatID string, page int, pageSize int) ([]dtos.MessageDTO, int, error) {
+	messages, total, err := u.facebookRepo.GetMessagesByChatID(ctx, chatID, page, pageSize)
 	if err != nil {
 		return nil, 0, err
 	}

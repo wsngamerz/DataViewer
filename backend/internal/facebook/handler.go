@@ -156,8 +156,8 @@ func (h *handler) getMessages(ctx context.Context, _ *struct{}) (*GetMessagesRes
 
 type GetMessagesByChatIDRequest struct {
 	ChatID   string `path:"chatID" required:"true"`
-	Page     int    `query:"page" required:"false"`
-	PageSize int    `query:"pageSize" required:"false"`
+	Page     int    `query:"page" required:"false" default:"1"`
+	PageSize int    `query:"pageSize" required:"false" default:"50"`
 }
 
 type GetMessagesByChatIDResponse struct {
@@ -171,31 +171,19 @@ type GetMessagesByChatIDResponse struct {
 }
 
 func (h *handler) getMessagesByChatID(ctx context.Context, input *GetMessagesByChatIDRequest) (*GetMessagesByChatIDResponse, error) {
-	// Set defaults if not provided
-	page := input.Page
-	if page < 1 {
-		page = 1
-	}
-	pageSize := input.PageSize
-	if pageSize < 1 {
-		pageSize = 20 // default page size
-	}
-	offset := (page - 1) * pageSize
-	limit := pageSize
-
-	messages, total, err := h.facebookUseCase.GetMessagesByChatID(ctx, input.ChatID, limit, offset)
+	messages, total, err := h.facebookUseCase.GetMessagesByChatID(ctx, input.ChatID, input.Page, input.PageSize)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting facebook messages by chat ID")
 		return nil, err
 	}
 
-	pageCount := (total + pageSize - 1) / pageSize
+	pageCount := (total + input.PageSize - 1) / input.PageSize
 
 	response := &GetMessagesByChatIDResponse{}
 	response.Body.Messages = messages
 	response.Body.Total = total
-	response.Body.Page = page
-	response.Body.PageSize = pageSize
+	response.Body.Page = input.Page
+	response.Body.PageSize = input.PageSize
 	response.Body.PageCount = pageCount
 	return response, nil
 }

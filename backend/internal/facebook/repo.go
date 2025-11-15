@@ -150,14 +150,21 @@ func (r repo) GetMessages(ctx context.Context) ([]models.Message, error) {
 	return messages, nil
 }
 
-func (r repo) GetMessagesByChatID(ctx context.Context, chatID string, limit int, offset int) ([]models.Message, int, error) {
+func (r repo) GetMessagesByChatID(ctx context.Context, chatID string, page int, pageSize int) ([]models.Message, int, error) {
 	var messages []models.Message
 	filter := map[string]interface{}{"chatId": chatID, "deleted": false}
 	total, err := r.messageCollection.CountDocuments(ctx, filter)
 	if err != nil {
 		return messages, 0, err
 	}
-	findOpts := options.Find().SetLimit(int64(limit)).SetSkip(int64(offset)).SetSort(bson.M{"createdAt": 1})
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 {
+		pageSize = 20
+	}
+	skip := int64((page - 1) * pageSize)
+	findOpts := options.Find().SetLimit(int64(pageSize)).SetSkip(skip).SetSort(bson.M{"sentAt": -1})
 	cursor, err := r.messageCollection.Find(ctx, filter, findOpts)
 	if err != nil {
 		return messages, 0, err

@@ -18,7 +18,7 @@ type FacebookUseCase interface {
 	GetChatByID(ctx context.Context, id string) (dtos.ChatDTO, error)
 
 	GetMessages(ctx context.Context) ([]dtos.MessageDTO, error)
-	GetMessagesByChatID(ctx context.Context, chatID string, limit int, offset int) ([]dtos.MessageDTO, int, error)
+	GetMessagesByChatID(ctx context.Context, chatID string, page int, pageSize int) ([]dtos.MessageDTO, int, error)
 }
 
 type FacebookRepo interface {
@@ -36,7 +36,7 @@ type FacebookRepo interface {
 	CreateChat(ctx context.Context, c models.Chat) error
 
 	GetMessages(ctx context.Context) ([]models.Message, error)
-	GetMessagesByChatID(ctx context.Context, chatID string, limit int, offset int) ([]models.Message, int, error)
+	GetMessagesByChatID(ctx context.Context, chatID string, page int, pageSize int) ([]models.Message, int, error)
 	CreateMessage(ctx context.Context, m models.Message) error
 	CreateMessagesBulk(ctx context.Context, messages []models.Message) error
 }

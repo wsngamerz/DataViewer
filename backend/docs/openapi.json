@@ -636,6 +636,7 @@
             "in": "query",
             "name": "page",
             "schema": {
+              "default": 1,
               "format": "int64",
               "type": "integer"
             }
@@ -645,6 +646,7 @@
             "in": "query",
             "name": "pageSize",
             "schema": {
+              "default": 50,
               "format": "int64",
               "type": "integer"
             }
