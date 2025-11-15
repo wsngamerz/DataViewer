@@ -109,7 +109,14 @@ function SettingsModal({open, onClose}: { open: boolean; onClose: () => void }) 
 
 function ChatsPage() {
     const {data, isLoading, error} = useQuery(getApiFacebookChatsOptions());
-    const chats: ChatDto[] = data?.chats ?? [];
+    const chats: ChatDto[] = (data?.chats ?? []).slice().sort((a, b) => {
+        const nameA = (a.title || '').trim();
+        const nameB = (b.title || '').trim();
+        if (!nameA && nameB) return 1;   // a is untitled, b is titled
+        if (nameA && !nameB) return -1;  // a is titled, b is untitled
+        if (!nameA && !nameB) return 0;  // both untitled
+        return nameA.localeCompare(nameB, undefined, { sensitivity: 'base' });
+    });
     const [settingsOpen, setSettingsOpen] = useState(false);
     const match = useMatch({from: '/chats/$chatid', shouldThrow: false});
     const activeChatId = match?.params?.chatid;
