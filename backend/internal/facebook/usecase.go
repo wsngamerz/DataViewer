@@ -7,6 +7,7 @@ import (
 	"io"
 	"regexp"
 	"time"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
@@ -258,7 +259,7 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 			BaseModel: models.BaseModel{ID: uuid.New().String()},
 			ChatID:    chatModel.ID,
 			SenderID:  message.SenderName, // TODO: Map sender name to ID properly
-			Content:   message.Content,
+			Content:   fixMessageEncoding(message.Content),
 			SentAt:    time.UnixMilli(int64(message.Timestamp)),
 		}
 		messageModel.UpdateTimestamps()
@@ -287,4 +288,24 @@ func createImportFromDTO(input domain.CreateFacebookImport) (models.Import, erro
 	}
 	model.UpdateTimestamps()
 	return model, nil
+}
+
+// fixMessageEncoding does some fancy magic here to make sure that the content is correctly encoded to utf8 cause fb
+// does some weird ass shit to strings in the data exports
+func fixMessageEncoding(s string) string {
+	// Convert each rune ≤ 0xFF to its raw byte
+	raw := []byte{}
+	for _, r := range s {
+		if r <= 0xFF {
+			raw = append(raw, byte(r))
+		} else {
+			// Runes above 255 should be kept as proper UTF-8
+			buf := make([]byte, utf8.RuneLen(r))
+			utf8.EncodeRune(buf, r)
+			raw = append(raw, buf...)
+		}
+	}
+
+	// Interpret reconstructed bytes as UTF-8
+	return string(raw)
 }
