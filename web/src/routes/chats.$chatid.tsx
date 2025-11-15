@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {createFileRoute, useNavigate} from '@tanstack/react-router';
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import type {MessageDto} from '@/client/types.gen';
@@ -39,6 +39,7 @@ function ChatPage() {
     const {name: yourName} = useUser();
     const isInitialLoad = useRef(true);
     const prevDataLength = useRef(0);
+    const [showModal, setShowModal] = useState(false);
 
     const {data: summaryData, status: summaryStatus} = useQuery(getApiFacebookChatsByIdSummaryOptions({path: {id: chatid}}));
 
@@ -136,20 +137,29 @@ function ChatPage() {
                     >
                         <span style={{fontSize: 22, lineHeight: 1, marginRight: 2}}>&larr;</span>
                     </button>
-                    <div style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: '50%',
-                        background: '#d1d5db',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 700,
-                        fontSize: 18,
-                        color: '#444'
-                    }}>
+                    {/* Avatar is now clickable to open modal */}
+                    <button
+                        onClick={() => setShowModal(true)}
+                        aria-label="Show chat details"
+                        style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: '50%',
+                            background: '#d1d5db',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 700,
+                            fontSize: 18,
+                            color: '#444',
+                            cursor: 'pointer',
+                            outline: 'none',
+                            border: '2px solid transparent',
+                            marginRight: 0,
+                        }}
+                    >
                         {getAvatarInitials(chatTitle)}
-                    </div>
+                    </button>
                     <div>
                         <div style={{fontWeight: 600, fontSize: 18}}>{chatTitle}</div>
                         <div style={{fontSize: 12, color: '#888'}}>Facebook Chat</div>
@@ -370,6 +380,124 @@ function ChatPage() {
                     );
                 })}
             </div>
+
+            {/* Modal for chat details and participants */}
+            {showModal && chatSummary && (
+                <dialog
+                    open
+                    aria-modal="true"
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        background: 'rgba(0,0,0,0.32)',
+                        zIndex: 1000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: 'none',
+                        padding: 0,
+                    }}
+                    onClick={() => setShowModal(false)}
+                >
+                    <div
+                        role="document"
+                        tabIndex={0}
+                        style={{
+                            background: '#fff',
+                            borderRadius: 12,
+                            boxShadow: '0 4px 32px rgba(0,0,0,0.12)',
+                            padding: 32,
+                            minWidth: 320,
+                            maxWidth: "max(420px, 60dvw)",
+                            width: '90vw',
+                            maxHeight: '80vh',
+                            overflowY: 'auto',
+                            position: 'relative',
+                            outline: 'none',
+                        }}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setShowModal(false)}
+                            aria-label="Close"
+                            style={{
+                                position: 'absolute',
+                                top: 16,
+                                right: 16,
+                                background: 'none',
+                                border: 'none',
+                                fontSize: 22,
+                                cursor: 'pointer',
+                                color: '#888',
+                            }}
+                        >
+                            &times;
+                        </button>
+                        <div style={{display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16}}>
+                            <div style={{
+                                width: 48,
+                                height: 48,
+                                borderRadius: '50%',
+                                background: '#d1d5db',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: 700,
+                                fontSize: 22,
+                                color: '#444',
+                            }}>{getAvatarInitials(chatTitle)}</div>
+                            <div>
+                                <div style={{fontWeight: 600, fontSize: 20}}>{chatTitle}</div>
+                                <div style={{fontSize: 13, color: '#888'}}>Facebook Chat</div>
+                            </div>
+                        </div>
+                        <div style={{marginBottom: 18}}>
+                            <div style={{fontSize: 15, color: '#666', marginBottom: 4}}>
+                                <span style={{fontWeight: 500}}>Participants ({participantNames.length}):</span>
+                            </div>
+                            <div style={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                gap: '8px',
+                                maxHeight: 180,
+                                overflowY: 'auto',
+                                margin: '0 -4px',
+                            }}>
+                                {participantNames.length > 0 ? participantNames.map((name, i) => (
+                                    <span
+                                        key={name + i}
+                                        style={{
+                                            display: 'inline-block',
+                                            background: getAvatarColor(name),
+                                            color: '#fff',
+                                            borderRadius: 16,
+                                            padding: '4px 12px',
+                                            fontSize: 15,
+                                            fontWeight: 500,
+                                            margin: '0 4px 4px 0',
+                                            boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                                            border: '1px solid #e5e7eb',
+                                            maxWidth: 180,
+                                            whiteSpace: 'nowrap',
+                                            textOverflow: 'ellipsis',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        {name}
+                                    </span>
+                                )) : <span style={{color: '#aaa'}}>—</span>}
+                            </div>
+                        </div>
+                        <div style={{fontSize: 15, color: '#666', marginBottom: 8}}>
+                            <span style={{marginRight: 12}}><span aria-hidden="true">💬</span> {chatSummary.message_count} messages</span>
+                            <span><span aria-hidden="true">📅</span> {chatSummary.estimated_created_at ? new Date(chatSummary.estimated_created_at).toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'}) : '—'}</span>
+                        </div>
+                    </div>
+                </dialog>
+            )}
         </div>
     );
 }
