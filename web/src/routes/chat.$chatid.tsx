@@ -82,7 +82,7 @@ function ChatPage() {
     const participantNames = chat?.participant_ids || []; // the ids are actually names for now. this will be fixed when we have accounts data
 
     return (
-        <div style={{height: '100vh', display: 'flex', flexDirection: 'column', background: '#f7f7fa'}}>
+        <div style={{height: 'calc(100dvh - 72px)', display: 'flex', flexDirection: 'column', background: '#f7f7fa'}}>
             {/* Header */}
             <div style={{padding: '16px', background: '#fff', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', gap: 16}}>
                 {/* Back button */}
