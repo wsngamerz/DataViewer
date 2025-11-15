@@ -282,6 +282,10 @@
             "readOnly": true,
             "type": "string"
           },
+          "limit": {
+            "format": "int64",
+            "type": "integer"
+          },
           "messages": {
             "items": {
               "$ref": "#/components/schemas/MessageDTO"
@@ -290,10 +294,21 @@
               "array",
               "null"
             ]
+          },
+          "offset": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
-          "messages"
+          "messages",
+          "total",
+          "limit",
+          "offset"
         ],
         "type": "object"
       },
@@ -604,6 +619,24 @@
             "required": true,
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
             }
           }
         ],

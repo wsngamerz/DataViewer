@@ -8,7 +8,9 @@ import (
 	"github.com/wsngamerz/dataviewer/internal/domain"
 	"github.com/wsngamerz/dataviewer/internal/errs"
 	"github.com/wsngamerz/dataviewer/internal/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type repo struct {
@@ -148,19 +150,23 @@ func (r repo) GetMessages(ctx context.Context) ([]models.Message, error) {
 	return messages, nil
 }
 
-func (r repo) GetMessagesByChatID(ctx context.Context, chatID string) ([]models.Message, error) {
+func (r repo) GetMessagesByChatID(ctx context.Context, chatID string, limit int, offset int) ([]models.Message, int, error) {
 	var messages []models.Message
-	cursor, err := r.messageCollection.Find(ctx, map[string]interface{}{"chatId": chatID, "deleted": false})
+	filter := map[string]interface{}{"chatId": chatID, "deleted": false}
+	total, err := r.messageCollection.CountDocuments(ctx, filter)
 	if err != nil {
-		return messages, err
+		return messages, 0, err
 	}
-
+	findOpts := options.Find().SetLimit(int64(limit)).SetSkip(int64(offset)).SetSort(bson.M{"createdAt": 1})
+	cursor, err := r.messageCollection.Find(ctx, filter, findOpts)
+	if err != nil {
+		return messages, 0, err
+	}
 	err = cursor.All(ctx, &messages)
 	if err != nil {
-		return messages, err
+		return messages, 0, err
 	}
-
-	return messages, nil
+	return messages, int(total), nil
 }
 
 func (r repo) CreateMessage(ctx context.Context, m models.Message) error {

@@ -203,14 +203,26 @@ components:
           format: uri
           readOnly: true
           type: string
+        limit:
+          format: int64
+          type: integer
         messages:
           items:
             $ref: "#/components/schemas/MessageDTO"
           type:
             - array
             - "null"
+        offset:
+          format: int64
+          type: integer
+        total:
+          format: int64
+          type: integer
       required:
         - messages
+        - total
+        - limit
+        - offset
       type: object
     GetMessagesResponseBody:
       additionalProperties: false
@@ -412,6 +424,18 @@ paths:
           required: true
           schema:
             type: string
+        - explode: false
+          in: query
+          name: limit
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: offset
+          schema:
+            format: int64
+            type: integer
       responses:
         "200":
           content:

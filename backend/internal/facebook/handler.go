@@ -156,16 +156,21 @@ func (h *handler) getMessages(ctx context.Context, _ *struct{}) (*GetMessagesRes
 
 type GetMessagesByChatIDRequest struct {
 	ChatID string `path:"chatID" required:"true"`
+	Limit  int    `query:"limit" required:"false"`
+	Offset int    `query:"offset" required:"false"`
 }
 
 type GetMessagesByChatIDResponse struct {
 	Body struct {
 		Messages []dtos.MessageDTO `json:"messages"`
+		Total    int               `json:"total"`
+		Limit    int               `json:"limit"`
+		Offset   int               `json:"offset"`
 	}
 }
 
 func (h *handler) getMessagesByChatID(ctx context.Context, input *GetMessagesByChatIDRequest) (*GetMessagesByChatIDResponse, error) {
-	messages, err := h.facebookUseCase.GetMessagesByChatID(ctx, input.ChatID)
+	messages, total, err := h.facebookUseCase.GetMessagesByChatID(ctx, input.ChatID, input.Limit, input.Offset)
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting facebook messages by chat ID")
 		return nil, err
@@ -173,5 +178,8 @@ func (h *handler) getMessagesByChatID(ctx context.Context, input *GetMessagesByC
 
 	response := &GetMessagesByChatIDResponse{}
 	response.Body.Messages = messages
+	response.Body.Total = total
+	response.Body.Limit = input.Limit
+	response.Body.Offset = input.Offset
 	return response, nil
 }

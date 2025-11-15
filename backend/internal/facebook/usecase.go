@@ -93,13 +93,12 @@ func (u usecase) GetMessages(ctx context.Context) ([]dtos.MessageDTO, error) {
 	return models.ToDTOs(messages), nil
 }
 
-func (u usecase) GetMessagesByChatID(ctx context.Context, chatID string) ([]dtos.MessageDTO, error) {
-	messages, err := u.facebookRepo.GetMessagesByChatID(ctx, chatID)
+func (u usecase) GetMessagesByChatID(ctx context.Context, chatID string, limit int, offset int) ([]dtos.MessageDTO, int, error) {
+	messages, total, err := u.facebookRepo.GetMessagesByChatID(ctx, chatID, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-
-	return models.ToDTOs(messages), nil
+	return models.ToDTOs(messages), total, nil
 }
 
 func (u usecase) processFacebookImport(zipReader *zip.Reader, id string) {
