@@ -20,6 +20,15 @@ export type ChatDto = {
     title: string;
 };
 
+export type ChatSummaryDto = {
+    estimated_created_at: string;
+    id: string;
+    last_message: MessageDto;
+    message_count: number;
+    participant_ids: Array<string> | null;
+    title: string;
+};
+
 export type CreateImportResponseBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -88,6 +97,14 @@ export type GetChatByIdResponseBody = {
      */
     readonly $schema?: string;
     chat: ChatDto;
+};
+
+export type GetChatSummaryResponseBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    summary: ChatSummaryDto;
 };
 
 export type GetChatsResponseBody = {
@@ -179,6 +196,10 @@ export type GetAccountsResponseBodyWritable = {
 
 export type GetChatByIdResponseBodyWritable = {
     chat: ChatDto;
+};
+
+export type GetChatSummaryResponseBodyWritable = {
+    summary: ChatSummaryDto;
 };
 
 export type GetChatsResponseBodyWritable = {
@@ -278,6 +299,63 @@ export type GetApiFacebookChatsByIdResponses = {
 
 export type GetApiFacebookChatsByIdResponse = GetApiFacebookChatsByIdResponses[keyof GetApiFacebookChatsByIdResponses];
 
+export type GetApiFacebookChatsByIdMessagesData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: {
+        page?: number;
+        pageSize?: number;
+    };
+    url: '/api/facebook/chats/{id}/messages';
+};
+
+export type GetApiFacebookChatsByIdMessagesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetApiFacebookChatsByIdMessagesError = GetApiFacebookChatsByIdMessagesErrors[keyof GetApiFacebookChatsByIdMessagesErrors];
+
+export type GetApiFacebookChatsByIdMessagesResponses = {
+    /**
+     * OK
+     */
+    200: GetMessagesByChatIdResponseBody;
+};
+
+export type GetApiFacebookChatsByIdMessagesResponse = GetApiFacebookChatsByIdMessagesResponses[keyof GetApiFacebookChatsByIdMessagesResponses];
+
+export type GetApiFacebookChatsByIdSummaryData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/facebook/chats/{id}/summary';
+};
+
+export type GetApiFacebookChatsByIdSummaryErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetApiFacebookChatsByIdSummaryError = GetApiFacebookChatsByIdSummaryErrors[keyof GetApiFacebookChatsByIdSummaryErrors];
+
+export type GetApiFacebookChatsByIdSummaryResponses = {
+    /**
+     * OK
+     */
+    200: GetChatSummaryResponseBody;
+};
+
+export type GetApiFacebookChatsByIdSummaryResponse = GetApiFacebookChatsByIdSummaryResponses[keyof GetApiFacebookChatsByIdSummaryResponses];
+
 export type GetApiFacebookImportsData = {
     body?: never;
     path?: never;
@@ -355,33 +433,3 @@ export type GetApiFacebookMessagesResponses = {
 };
 
 export type GetApiFacebookMessagesResponse = GetApiFacebookMessagesResponses[keyof GetApiFacebookMessagesResponses];
-
-export type GetApiFacebookMessagesByChatIdData = {
-    body?: never;
-    path: {
-        chatID: string;
-    };
-    query?: {
-        page?: number;
-        pageSize?: number;
-    };
-    url: '/api/facebook/messages/{chatID}';
-};
-
-export type GetApiFacebookMessagesByChatIdErrors = {
-    /**
-     * Error
-     */
-    default: ErrorModel;
-};
-
-export type GetApiFacebookMessagesByChatIdError = GetApiFacebookMessagesByChatIdErrors[keyof GetApiFacebookMessagesByChatIdErrors];
-
-export type GetApiFacebookMessagesByChatIdResponses = {
-    /**
-     * OK
-     */
-    200: GetMessagesByChatIdResponseBody;
-};
-
-export type GetApiFacebookMessagesByChatIdResponse = GetApiFacebookMessagesByChatIdResponses[keyof GetApiFacebookMessagesByChatIdResponses];

@@ -66,6 +66,46 @@
         ],
         "type": "object"
       },
+      "ChatSummaryDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "estimated_created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "last_message": {
+            "$ref": "#/components/schemas/MessageDTO"
+          },
+          "message_count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "participant_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "participant_ids",
+          "message_count",
+          "last_message",
+          "estimated_created_at"
+        ],
+        "type": "object"
+      },
       "CreateImportResponseBody": {
         "additionalProperties": false,
         "properties": {
@@ -213,6 +253,27 @@
         },
         "required": [
           "chat"
+        ],
+        "type": "object"
+      },
+      "GetChatSummaryResponseBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/GetChatSummaryResponseBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ChatSummaryDTO"
+          }
+        },
+        "required": [
+          "summary"
         ],
         "type": "object"
       },
@@ -505,6 +566,102 @@
         "summary": "Get API facebook chats by ID"
       }
     },
+    "/api/facebook/chats/{id}/messages": {
+      "get": {
+        "operationId": "get-api-facebook-chats-by-id-messages",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "default": 50,
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMessagesByChatIDResponseBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get API facebook chats by ID messages"
+      }
+    },
+    "/api/facebook/chats/{id}/summary": {
+      "get": {
+        "operationId": "get-api-facebook-chats-by-id-summary",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetChatSummaryResponseBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get API facebook chats by ID summary"
+      }
+    },
     "/api/facebook/imports": {
       "get": {
         "operationId": "get-api-facebook-imports",
@@ -617,64 +774,6 @@
           }
         },
         "summary": "Get API facebook messages"
-      }
-    },
-    "/api/facebook/messages/{chatID}": {
-      "get": {
-        "operationId": "get-api-facebook-messages-by-chat-id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "chatID",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "page",
-            "schema": {
-              "default": 1,
-              "format": "int64",
-              "type": "integer"
-            }
-          },
-          {
-            "explode": false,
-            "in": "query",
-            "name": "pageSize",
-            "schema": {
-              "default": 50,
-              "format": "int64",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMessagesByChatIDResponseBody"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "default": {
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorModel"
-                }
-              }
-            },
-            "description": "Error"
-          }
-        },
-        "summary": "Get API facebook messages by chat ID"
       }
     }
   }

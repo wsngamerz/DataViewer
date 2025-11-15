@@ -3,8 +3,8 @@
 import { type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { getApiFacebookAccounts, getApiFacebookChats, getApiFacebookChatsById, getApiFacebookImports, getApiFacebookMessages, getApiFacebookMessagesByChatId, type Options, postApiFacebookImports } from '../sdk.gen';
-import type { GetApiFacebookAccountsData, GetApiFacebookChatsByIdData, GetApiFacebookChatsData, GetApiFacebookImportsData, GetApiFacebookMessagesByChatIdData, GetApiFacebookMessagesByChatIdError, GetApiFacebookMessagesByChatIdResponse, GetApiFacebookMessagesData, PostApiFacebookImportsData, PostApiFacebookImportsError, PostApiFacebookImportsResponse } from '../types.gen';
+import { getApiFacebookAccounts, getApiFacebookChats, getApiFacebookChatsById, getApiFacebookChatsByIdMessages, getApiFacebookChatsByIdSummary, getApiFacebookImports, getApiFacebookMessages, type Options, postApiFacebookImports } from '../sdk.gen';
+import type { GetApiFacebookAccountsData, GetApiFacebookChatsByIdData, GetApiFacebookChatsByIdMessagesData, GetApiFacebookChatsByIdMessagesError, GetApiFacebookChatsByIdMessagesResponse, GetApiFacebookChatsByIdSummaryData, GetApiFacebookChatsData, GetApiFacebookImportsData, GetApiFacebookMessagesData, PostApiFacebookImportsData, PostApiFacebookImportsError, PostApiFacebookImportsResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -95,6 +95,102 @@ export const getApiFacebookChatsByIdOptions = (options: Options<GetApiFacebookCh
     queryKey: getApiFacebookChatsByIdQueryKey(options)
 });
 
+export const getApiFacebookChatsByIdMessagesQueryKey = (options: Options<GetApiFacebookChatsByIdMessagesData>) => createQueryKey('getApiFacebookChatsByIdMessages', options);
+
+/**
+ * Get API facebook chats by ID messages
+ */
+export const getApiFacebookChatsByIdMessagesOptions = (options: Options<GetApiFacebookChatsByIdMessagesData>) => queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getApiFacebookChatsByIdMessages({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getApiFacebookChatsByIdMessagesQueryKey(options)
+});
+
+const createInfiniteParams = <K extends Pick<QueryKey<Options>[0], 'body' | 'headers' | 'path' | 'query'>>(queryKey: QueryKey<Options>, page: K) => {
+    const params = {
+        ...queryKey[0]
+    };
+    if (page.body) {
+        params.body = {
+            ...queryKey[0].body as any,
+            ...page.body as any
+        };
+    }
+    if (page.headers) {
+        params.headers = {
+            ...queryKey[0].headers,
+            ...page.headers
+        };
+    }
+    if (page.path) {
+        params.path = {
+            ...queryKey[0].path as any,
+            ...page.path as any
+        };
+    }
+    if (page.query) {
+        params.query = {
+            ...queryKey[0].query as any,
+            ...page.query as any
+        };
+    }
+    return params as unknown as typeof page;
+};
+
+export const getApiFacebookChatsByIdMessagesInfiniteQueryKey = (options: Options<GetApiFacebookChatsByIdMessagesData>): QueryKey<Options<GetApiFacebookChatsByIdMessagesData>> => createQueryKey('getApiFacebookChatsByIdMessages', options, true);
+
+/**
+ * Get API facebook chats by ID messages
+ */
+export const getApiFacebookChatsByIdMessagesInfiniteOptions = (options: Options<GetApiFacebookChatsByIdMessagesData>) => {
+    return infiniteQueryOptions<GetApiFacebookChatsByIdMessagesResponse, GetApiFacebookChatsByIdMessagesError, InfiniteData<GetApiFacebookChatsByIdMessagesResponse>, QueryKey<Options<GetApiFacebookChatsByIdMessagesData>>, number | Pick<QueryKey<Options<GetApiFacebookChatsByIdMessagesData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<GetApiFacebookChatsByIdMessagesData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    page: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await getApiFacebookChatsByIdMessages({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: getApiFacebookChatsByIdMessagesInfiniteQueryKey(options)
+    });
+};
+
+export const getApiFacebookChatsByIdSummaryQueryKey = (options: Options<GetApiFacebookChatsByIdSummaryData>) => createQueryKey('getApiFacebookChatsByIdSummary', options);
+
+/**
+ * Get API facebook chats by ID summary
+ */
+export const getApiFacebookChatsByIdSummaryOptions = (options: Options<GetApiFacebookChatsByIdSummaryData>) => queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getApiFacebookChatsByIdSummary({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getApiFacebookChatsByIdSummaryQueryKey(options)
+});
+
 export const getApiFacebookImportsQueryKey = (options?: Options<GetApiFacebookImportsData>) => createQueryKey('getApiFacebookImports', options);
 
 /**
@@ -147,81 +243,3 @@ export const getApiFacebookMessagesOptions = (options?: Options<GetApiFacebookMe
     },
     queryKey: getApiFacebookMessagesQueryKey(options)
 });
-
-export const getApiFacebookMessagesByChatIdQueryKey = (options: Options<GetApiFacebookMessagesByChatIdData>) => createQueryKey('getApiFacebookMessagesByChatId', options);
-
-/**
- * Get API facebook messages by chat ID
- */
-export const getApiFacebookMessagesByChatIdOptions = (options: Options<GetApiFacebookMessagesByChatIdData>) => queryOptions({
-    queryFn: async ({ queryKey, signal }) => {
-        const { data } = await getApiFacebookMessagesByChatId({
-            ...options,
-            ...queryKey[0],
-            signal,
-            throwOnError: true
-        });
-        return data;
-    },
-    queryKey: getApiFacebookMessagesByChatIdQueryKey(options)
-});
-
-const createInfiniteParams = <K extends Pick<QueryKey<Options>[0], 'body' | 'headers' | 'path' | 'query'>>(queryKey: QueryKey<Options>, page: K) => {
-    const params = {
-        ...queryKey[0]
-    };
-    if (page.body) {
-        params.body = {
-            ...queryKey[0].body as any,
-            ...page.body as any
-        };
-    }
-    if (page.headers) {
-        params.headers = {
-            ...queryKey[0].headers,
-            ...page.headers
-        };
-    }
-    if (page.path) {
-        params.path = {
-            ...queryKey[0].path as any,
-            ...page.path as any
-        };
-    }
-    if (page.query) {
-        params.query = {
-            ...queryKey[0].query as any,
-            ...page.query as any
-        };
-    }
-    return params as unknown as typeof page;
-};
-
-export const getApiFacebookMessagesByChatIdInfiniteQueryKey = (options: Options<GetApiFacebookMessagesByChatIdData>): QueryKey<Options<GetApiFacebookMessagesByChatIdData>> => createQueryKey('getApiFacebookMessagesByChatId', options, true);
-
-/**
- * Get API facebook messages by chat ID
- */
-export const getApiFacebookMessagesByChatIdInfiniteOptions = (options: Options<GetApiFacebookMessagesByChatIdData>) => {
-    return infiniteQueryOptions<GetApiFacebookMessagesByChatIdResponse, GetApiFacebookMessagesByChatIdError, InfiniteData<GetApiFacebookMessagesByChatIdResponse>, QueryKey<Options<GetApiFacebookMessagesByChatIdData>>, number | Pick<QueryKey<Options<GetApiFacebookMessagesByChatIdData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
-    // @ts-ignore
-    {
-        queryFn: async ({ pageParam, queryKey, signal }) => {
-            // @ts-ignore
-            const page: Pick<QueryKey<Options<GetApiFacebookMessagesByChatIdData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
-                query: {
-                    page: pageParam
-                }
-            };
-            const params = createInfiniteParams(queryKey, page);
-            const { data } = await getApiFacebookMessagesByChatId({
-                ...options,
-                ...params,
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: getApiFacebookMessagesByChatIdInfiniteQueryKey(options)
-    });
-};

@@ -85,6 +85,15 @@ func (u usecase) GetChatByID(ctx context.Context, id string) (dtos.ChatDTO, erro
 	return chat.ToDTO(), nil
 }
 
+func (u usecase) GetChatSummary(ctx context.Context, id string) (dtos.ChatSummaryDTO, error) {
+	summary, err := u.facebookRepo.GetChatSummary(ctx, id)
+	if err != nil {
+		return dtos.ChatSummaryDTO{}, err
+	}
+
+	return summary, nil
+}
+
 func (u usecase) GetMessages(ctx context.Context) ([]dtos.MessageDTO, error) {
 	messages, err := u.facebookRepo.GetMessages(ctx)
 	if err != nil {

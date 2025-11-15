@@ -25,9 +25,10 @@ func NewHandler(g *huma.Group, fuc domain.FacebookUseCase) {
 
 	huma.Get(g, "/chats", h.getChats)
 	huma.Get(g, "/chats/{id}", h.getChatByID)
+	huma.Get(g, "/chats/{id}/summary", h.getChatSummary)
+	huma.Get(g, "/chats/{id}/messages", h.getMessagesByChatID)
 
 	huma.Get(g, "/messages", h.getMessages)
-	huma.Get(g, "/messages/{chatID}", h.getMessagesByChatID)
 }
 
 type GetImportsResponse struct {
@@ -155,7 +156,7 @@ func (h *handler) getMessages(ctx context.Context, _ *struct{}) (*GetMessagesRes
 }
 
 type GetMessagesByChatIDRequest struct {
-	ChatID   string `path:"chatID" required:"true"`
+	ChatID   string `path:"id" required:"true"`
 	Page     int    `query:"page" required:"false" default:"1"`
 	PageSize int    `query:"pageSize" required:"false" default:"50"`
 }
@@ -185,5 +186,27 @@ func (h *handler) getMessagesByChatID(ctx context.Context, input *GetMessagesByC
 	response.Body.Page = input.Page
 	response.Body.PageSize = input.PageSize
 	response.Body.PageCount = pageCount
+	return response, nil
+}
+
+type GetChatSummaryRequest struct {
+	ID string `path:"id" required:"true"`
+}
+
+type GetChatSummaryResponse struct {
+	Body struct {
+		Summary dtos.ChatSummaryDTO `json:"summary"`
+	}
+}
+
+func (h *handler) getChatSummary(ctx context.Context, input *GetChatSummaryRequest) (*GetChatSummaryResponse, error) {
+	summary, err := h.facebookUseCase.GetChatSummary(ctx, input.ID)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting facebook chat summary")
+		return nil, err
+	}
+
+	response := &GetChatSummaryResponse{}
+	response.Body.Summary = summary
 	return response, nil
 }

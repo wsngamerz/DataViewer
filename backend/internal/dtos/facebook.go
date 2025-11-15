@@ -28,6 +28,15 @@ type ChatDTO struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type ChatSummaryDTO struct {
+	ID                 string     `json:"id"`
+	Title              string     `json:"title"`
+	ParticipantIDs     []string   `json:"participant_ids"`
+	MessageCount       int        `json:"message_count"`
+	LastMessage        MessageDTO `json:"last_message"`
+	EstimatedCreatedAt time.Time  `json:"estimated_created_at"`
+}
+
 type MessageDTO struct {
 	ID       string `json:"id"`
 	ChatID   string `json:"chat_id"`

@@ -6,6 +6,7 @@ import (
 
 	"github.com/wsngamerz/dataviewer/internal/config"
 	"github.com/wsngamerz/dataviewer/internal/domain"
+	"github.com/wsngamerz/dataviewer/internal/dtos"
 	"github.com/wsngamerz/dataviewer/internal/errs"
 	"github.com/wsngamerz/dataviewer/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -115,6 +116,68 @@ func (r repo) GetChatByID(ctx context.Context, id string) (*models.Chat, error) 
 	}
 
 	return &chat, nil
+}
+
+func (r repo) GetChatSummary(ctx context.Context, id string) (dtos.ChatSummaryDTO, error) {
+	var summary dtos.ChatSummaryDTO
+
+	// 1. Fetch chat
+	chat, err := r.GetChatByID(ctx, id)
+	if err != nil {
+		return summary, err
+	}
+
+	// 2. Count participants from messages (unique SenderIDs)
+	participantInterfaces, err := r.messageCollection.Distinct(ctx, "senderId", bson.M{"chatId": id, "deleted": false})
+	if err != nil {
+		return summary, err
+	}
+	participantIDs := make([]string, 0, len(participantInterfaces))
+	for _, v := range participantInterfaces {
+		if s, ok := v.(string); ok {
+			participantIDs = append(participantIDs, s)
+		}
+	}
+
+	// 3. Count messages
+	msgFilter := bson.M{"chatId": id, "deleted": false}
+	messageCount, err := r.messageCollection.CountDocuments(ctx, msgFilter)
+	if err != nil {
+		return summary, err
+	}
+
+	// 4. Get last message
+	var lastMsg models.Message
+	findOpts := options.FindOne().SetSort(bson.M{"sentAt": -1})
+	err = r.messageCollection.FindOne(ctx, msgFilter, findOpts).Decode(&lastMsg)
+	var lastMsgDTO dtos.MessageDTO
+	if err == nil {
+		lastMsgDTO = dtos.MessageDTO{
+			ID:       lastMsg.ID,
+			SenderID: lastMsg.SenderID,
+			Content:  lastMsg.Content,
+			SentAt:   lastMsg.SentAt,
+		}
+	}
+
+	// 5. Estimate created at (earliest message)
+	var firstMsg models.Message
+	findOptsEarliest := options.FindOne().SetSort(bson.M{"sentAt": 1})
+	err = r.messageCollection.FindOne(ctx, msgFilter, findOptsEarliest).Decode(&firstMsg)
+	createdAt := chat.CreatedAt
+	if err == nil {
+		createdAt = firstMsg.SentAt
+	}
+
+	summary = dtos.ChatSummaryDTO{
+		ID:                 chat.ID,
+		Title:              chat.Title,
+		ParticipantIDs:     participantIDs,
+		MessageCount:       int(messageCount),
+		LastMessage:        lastMsgDTO,
+		EstimatedCreatedAt: createdAt,
+	}
+	return summary, nil
 }
 
 func (r repo) GetChatByThreadPath(ctx context.Context, threadPath string) (*models.Chat, error) {

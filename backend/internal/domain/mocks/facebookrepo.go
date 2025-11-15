@@ -8,6 +8,7 @@ import (
 	"context"
 
 	mock "github.com/stretchr/testify/mock"
+	"github.com/wsngamerz/dataviewer/internal/dtos"
 	"github.com/wsngamerz/dataviewer/internal/models"
 )
 
@@ -517,6 +518,72 @@ func (_c *MockFacebookRepo_GetChatByThreadPath_Call) Return(chat *models.Chat, e
 }
 
 func (_c *MockFacebookRepo_GetChatByThreadPath_Call) RunAndReturn(run func(ctx context.Context, threadPath string) (*models.Chat, error)) *MockFacebookRepo_GetChatByThreadPath_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetChatSummary provides a mock function for the type MockFacebookRepo
+func (_mock *MockFacebookRepo) GetChatSummary(ctx context.Context, id string) (dtos.ChatSummaryDTO, error) {
+	ret := _mock.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetChatSummary")
+	}
+
+	var r0 dtos.ChatSummaryDTO
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (dtos.ChatSummaryDTO, error)); ok {
+		return returnFunc(ctx, id)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) dtos.ChatSummaryDTO); ok {
+		r0 = returnFunc(ctx, id)
+	} else {
+		r0 = ret.Get(0).(dtos.ChatSummaryDTO)
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockFacebookRepo_GetChatSummary_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatSummary'
+type MockFacebookRepo_GetChatSummary_Call struct {
+	*mock.Call
+}
+
+// GetChatSummary is a helper method to define mock.On call
+//   - ctx context.Context
+//   - id string
+func (_e *MockFacebookRepo_Expecter) GetChatSummary(ctx interface{}, id interface{}) *MockFacebookRepo_GetChatSummary_Call {
+	return &MockFacebookRepo_GetChatSummary_Call{Call: _e.mock.On("GetChatSummary", ctx, id)}
+}
+
+func (_c *MockFacebookRepo_GetChatSummary_Call) Run(run func(ctx context.Context, id string)) *MockFacebookRepo_GetChatSummary_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetChatSummary_Call) Return(chatSummaryDTO dtos.ChatSummaryDTO, err error) *MockFacebookRepo_GetChatSummary_Call {
+	_c.Call.Return(chatSummaryDTO, err)
+	return _c
+}
+
+func (_c *MockFacebookRepo_GetChatSummary_Call) RunAndReturn(run func(ctx context.Context, id string) (dtos.ChatSummaryDTO, error)) *MockFacebookRepo_GetChatSummary_Call {
 	_c.Call.Return(run)
 	return _c
 }

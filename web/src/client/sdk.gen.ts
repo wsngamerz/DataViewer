@@ -2,7 +2,7 @@
 
 import { type Client, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetApiFacebookAccountsData, GetApiFacebookAccountsErrors, GetApiFacebookAccountsResponses, GetApiFacebookChatsByIdData, GetApiFacebookChatsByIdErrors, GetApiFacebookChatsByIdResponses, GetApiFacebookChatsData, GetApiFacebookChatsErrors, GetApiFacebookChatsResponses, GetApiFacebookImportsData, GetApiFacebookImportsErrors, GetApiFacebookImportsResponses, GetApiFacebookMessagesByChatIdData, GetApiFacebookMessagesByChatIdErrors, GetApiFacebookMessagesByChatIdResponses, GetApiFacebookMessagesData, GetApiFacebookMessagesErrors, GetApiFacebookMessagesResponses, PostApiFacebookImportsData, PostApiFacebookImportsErrors, PostApiFacebookImportsResponses } from './types.gen';
+import type { GetApiFacebookAccountsData, GetApiFacebookAccountsErrors, GetApiFacebookAccountsResponses, GetApiFacebookChatsByIdData, GetApiFacebookChatsByIdErrors, GetApiFacebookChatsByIdMessagesData, GetApiFacebookChatsByIdMessagesErrors, GetApiFacebookChatsByIdMessagesResponses, GetApiFacebookChatsByIdResponses, GetApiFacebookChatsByIdSummaryData, GetApiFacebookChatsByIdSummaryErrors, GetApiFacebookChatsByIdSummaryResponses, GetApiFacebookChatsData, GetApiFacebookChatsErrors, GetApiFacebookChatsResponses, GetApiFacebookImportsData, GetApiFacebookImportsErrors, GetApiFacebookImportsResponses, GetApiFacebookMessagesData, GetApiFacebookMessagesErrors, GetApiFacebookMessagesResponses, PostApiFacebookImportsData, PostApiFacebookImportsErrors, PostApiFacebookImportsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -49,6 +49,26 @@ export const getApiFacebookChatsById = <ThrowOnError extends boolean = false>(op
 };
 
 /**
+ * Get API facebook chats by ID messages
+ */
+export const getApiFacebookChatsByIdMessages = <ThrowOnError extends boolean = false>(options: Options<GetApiFacebookChatsByIdMessagesData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiFacebookChatsByIdMessagesResponses, GetApiFacebookChatsByIdMessagesErrors, ThrowOnError>({
+        url: '/api/facebook/chats/{id}/messages',
+        ...options
+    });
+};
+
+/**
+ * Get API facebook chats by ID summary
+ */
+export const getApiFacebookChatsByIdSummary = <ThrowOnError extends boolean = false>(options: Options<GetApiFacebookChatsByIdSummaryData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiFacebookChatsByIdSummaryResponses, GetApiFacebookChatsByIdSummaryErrors, ThrowOnError>({
+        url: '/api/facebook/chats/{id}/summary',
+        ...options
+    });
+};
+
+/**
  * Get API facebook imports
  */
 export const getApiFacebookImports = <ThrowOnError extends boolean = false>(options?: Options<GetApiFacebookImportsData, ThrowOnError>) => {
@@ -79,16 +99,6 @@ export const postApiFacebookImports = <ThrowOnError extends boolean = false>(opt
 export const getApiFacebookMessages = <ThrowOnError extends boolean = false>(options?: Options<GetApiFacebookMessagesData, ThrowOnError>) => {
     return (options?.client ?? client).get<GetApiFacebookMessagesResponses, GetApiFacebookMessagesErrors, ThrowOnError>({
         url: '/api/facebook/messages',
-        ...options
-    });
-};
-
-/**
- * Get API facebook messages by chat ID
- */
-export const getApiFacebookMessagesByChatId = <ThrowOnError extends boolean = false>(options: Options<GetApiFacebookMessagesByChatIdData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiFacebookMessagesByChatIdResponses, GetApiFacebookMessagesByChatIdErrors, ThrowOnError>({
-        url: '/api/facebook/messages/{chatID}',
         ...options
     });
 };

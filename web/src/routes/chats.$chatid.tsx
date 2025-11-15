@@ -4,7 +4,7 @@ import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import type {MessageDto} from '@/client/types.gen';
 import {
     getApiFacebookChatsByIdOptions,
-    getApiFacebookMessagesByChatIdInfiniteOptions
+    getApiFacebookChatsByIdMessagesInfiniteOptions
 } from "@/client/@tanstack/react-query.gen.ts";
 import {getAvatarColor, getAvatarInitials} from '../lib/utils';
 import {useUser} from '../lib/user-context';
@@ -51,8 +51,8 @@ function ChatPage() {
         status,
         error,
     } = useInfiniteQuery({
-        ...getApiFacebookMessagesByChatIdInfiniteOptions({
-            path: {chatID: chatid},
+        ...getApiFacebookChatsByIdMessagesInfiniteOptions({
+            path: {id: chatid},
             query: {pageSize: PAGE_SIZE},
         }),
         initialPageParam: 1,
