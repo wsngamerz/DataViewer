@@ -4,6 +4,7 @@ import { getApiFacebookChatsOptions } from '@/client/@tanstack/react-query.gen';
 import type { ChatDto } from '@/client/types.gen';
 import { getAvatarColor, getAvatarInitials } from '../lib/utils';
 import { UserProvider, useUser } from '../lib/user-context';
+import { useState } from 'react';
 
 export const Route = createFileRoute('/chats')({
     component: ChatsPage,
@@ -12,7 +13,7 @@ export const Route = createFileRoute('/chats')({
 function NameSelector() {
   const { name, setName } = useUser();
   return (
-    <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: 4 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <label htmlFor="your-name" style={{ fontSize: 13, color: '#888', marginBottom: 2 }}>Your Name</label>
       <input
         id="your-name"
@@ -33,10 +34,63 @@ function NameSelector() {
   );
 }
 
+function SettingsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null;
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      background: 'rgba(0,0,0,0.18)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          background: '#fff',
+          borderRadius: 12,
+          boxShadow: '0 4px 32px rgba(0,0,0,0.13)',
+          padding: '2rem 2rem 1.5rem 2rem',
+          minWidth: 320,
+          maxWidth: '90vw',
+          position: 'relative',
+        }}
+        onClick={e => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close settings"
+          style={{
+            position: 'absolute',
+            top: 12,
+            right: 12,
+            background: 'none',
+            border: 'none',
+            fontSize: 22,
+            color: '#888',
+            cursor: 'pointer',
+          }}
+        >
+          ×
+        </button>
+        <h2 style={{ fontSize: 20, marginBottom: 18, color: '#222' }}>Settings</h2>
+        <NameSelector />
+      </div>
+    </div>
+  );
+}
+
 function ChatsPage() {
     // Fetch chats using the generated TanStack Query client
     const { data, isLoading, error } = useQuery(getApiFacebookChatsOptions());
     const chats: ChatDto[] = data?.chats ?? [];
+    const [settingsOpen, setSettingsOpen] = useState(false);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading chats</div>;
@@ -68,8 +122,28 @@ function ChatsPage() {
                     minHeight: 0,
                 }}
             >
-                <NameSelector />
-                <h1 style={{ marginBottom: '1.5rem', fontSize: '1.3rem' }}>Chats</h1>
+                <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                  <h1 style={{ fontSize: '1.3rem', margin: 0 }}>Chats</h1>
+                  <button
+                    aria-label="Open settings"
+                    onClick={() => setSettingsOpen(true)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      marginLeft: 8,
+                      color: '#888',
+                      fontSize: 22,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span role="img" aria-label="Settings">⚙️</span>
+                  </button>
+                </div>
+                {/* Chat list */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     {chats.length === 0 && <div>No chats found.</div>}
                     {chats.map(chat => (
