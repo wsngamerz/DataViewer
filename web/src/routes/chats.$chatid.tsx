@@ -113,7 +113,8 @@ function ChatPage() {
                 borderBottom: '1px solid #eee',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 16
+                gap: 16,
+                position: 'relative'
             }}>
                 {/* Back button */}
                 <button
@@ -160,6 +161,34 @@ function ChatPage() {
                         </div>
                     )}
                 </div>
+
+                {isFetchingNextPage && (
+                    <div style={{
+                        position: 'absolute',
+                        bottom: "-64px",
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        color: '#666',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        fontSize: 13,
+                    }}>
+                        <div style={{
+                            width: 20,
+                            height: 20,
+                            border: '3px solid #e5e7eb',
+                            borderTop: '3px solid #6366f1',
+                            borderRadius: '50%',
+                            animation: 'spin 1s linear infinite',
+                            marginBottom: 6,
+                        }} />
+                        <style>
+                            {`@keyframes spin { 100% { transform: rotate(360deg); } }`}
+                        </style>
+                        <p>Loading more messages...</p>
+                    </div>
+                )}
             </div>
 
             {/* Chat body */}
@@ -173,6 +202,7 @@ function ChatPage() {
                         No messages in this chat yet.
                     </div>
                 )}
+
                 {/* Render grouped messages */}
                 {groupedMessages.map((group) => {
                     const isOwn = yourName && group.sender_id === yourName;
@@ -288,8 +318,6 @@ function ChatPage() {
                         </div>
                     );
                 })}
-                {isFetchingNextPage &&
-                    <div style={{textAlign: 'center', color: '#888', margin: 16}}>Loading more...</div>}
             </div>
         </div>
     );
