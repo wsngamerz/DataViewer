@@ -4,7 +4,7 @@ import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import type {MessageDto} from '@/client/types.gen';
 import {getApiFacebookMessagesByChatIdInfiniteOptions, getApiFacebookChatsByIdOptions} from "@/client/@tanstack/react-query.gen.ts";
 
-export const Route = createFileRoute('/chat/$chatid')({
+export const Route = createFileRoute('/chats/$chatid')({
     component: ChatPage,
 });
 
