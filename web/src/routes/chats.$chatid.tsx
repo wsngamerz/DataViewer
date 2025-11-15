@@ -3,6 +3,7 @@ import {createFileRoute, useNavigate} from '@tanstack/react-router';
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import type {MessageDto} from '@/client/types.gen';
 import {getApiFacebookMessagesByChatIdInfiniteOptions, getApiFacebookChatsByIdOptions} from "@/client/@tanstack/react-query.gen.ts";
+import { getAvatarColor } from '../lib/utils';
 
 export const Route = createFileRoute('/chats/$chatid')({
     component: ChatPage,
@@ -10,30 +11,6 @@ export const Route = createFileRoute('/chats/$chatid')({
 
 function getInitials(senderId: string) {
     return senderId?.slice(0, 2).toUpperCase();
-}
-
-// Utility to generate a consistent color from a string (senderId)
-function getAvatarColor(senderId: string): string {
-    // Simple hash function to get a number from the string
-    let hash = 0;
-    for (let i = 0; i < senderId.length; i++) {
-        hash = senderId.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    // Generate color from hash
-    const colors = [
-        '#fbbf24', // amber
-        '#a5b4fc', // indigo
-        '#34d399', // green
-        '#f472b6', // pink
-        '#60a5fa', // blue
-        '#f87171', // red
-        '#facc15', // yellow
-        '#38bdf8', // sky
-        '#c084fc', // purple
-        '#fb7185', // rose
-    ];
-    const idx = Math.abs(hash) % colors.length;
-    return colors[idx];
 }
 
 function ChatPage() {

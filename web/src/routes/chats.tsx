@@ -2,6 +2,7 @@ import {createFileRoute, Link, Outlet} from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { getApiFacebookChatsOptions } from '@/client/@tanstack/react-query.gen';
 import type { ChatDto } from '@/client/types.gen';
+import { getAvatarColor } from '../lib/utils';
 
 export const Route = createFileRoute('/chats')({
     component: ChatsPage,
@@ -71,13 +72,13 @@ function ChatsPage() {
                                 width: 40,
                                 height: 40,
                                 borderRadius: '50%',
-                                background: '#f3f4f6',
+                                background: getAvatarColor(chat.id || chat.title || ''),
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 fontWeight: 700,
                                 fontSize: '1.1rem',
-                                color: '#6366f1',
+                                color: '#fff',
                                 flexShrink: 0,
                                 border: '1px solid #e5e7eb',
                             }}>
