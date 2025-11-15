@@ -2,7 +2,7 @@ import {createFileRoute, Link, Outlet, useMatch} from '@tanstack/react-router';
 import {useQuery} from '@tanstack/react-query';
 import {getApiFacebookChatsSummariesOptions} from '@/client/@tanstack/react-query.gen';
 import type {ChatSummaryDto} from '@/client/types.gen';
-import {getAvatarColor, getAvatarInitials} from '../lib/utils';
+import {getAvatarColor, getAvatarInitials, formatNumber} from '../lib/utils';
 import {UserProvider, useUser} from '../lib/user-context';
 import {useEffect, useState} from 'react';
 
@@ -241,7 +241,7 @@ function ChatsPage() {
                                         alignItems: 'center',
                                         gap: 8,
                                     }}>
-                                        <span title="Message count">{chat?.message_count ?? 0} msgs</span>
+                                        <span title="Message count">💬 {formatNumber(chat?.message_count ?? 0)}</span>
                                         {/* Last message */}
                                         {chat?.last_message ? (
                                             <span style={{color: '#aaa', fontSize: '0.9em'}}>

@@ -39,3 +39,8 @@ export function getAvatarInitials(seed: string): string {
   // Otherwise, take first letter of first two words
   return (words[0][0] + words[1][0]).toUpperCase();
 }
+
+// Shared utility for locale-aware number formatting
+export function formatNumber(n: number) {
+    return new Intl.NumberFormat().format(n);
+}

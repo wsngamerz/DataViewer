@@ -6,7 +6,7 @@ import {
     getApiFacebookChatsByIdSummaryOptions,
     getApiFacebookChatsByIdMessagesInfiniteOptions
 } from "@/client/@tanstack/react-query.gen.ts";
-import {getAvatarColor, getAvatarInitials} from '../lib/utils';
+import {getAvatarColor, getAvatarInitials, formatNumber} from '../lib/utils';
 import {useUser} from '../lib/user-context';
 
 const PAGE_SIZE = 100;
@@ -199,7 +199,7 @@ function ChatPage() {
                             <span title="Participant count" style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666', whiteSpace: 'nowrap'}}>
                                 <span aria-hidden="true">👥</span>
                                 <span style={{position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden'}}>Participants</span>
-                                <span>{participantNames.length}</span>
+                                <span>{formatNumber(participantNames.length)}</span>
                             </span>
                             <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'inline-block'}}>
                                 {participantNames.length > 0
@@ -211,7 +211,7 @@ function ChatPage() {
                         <div title="Message count" style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666', whiteSpace: 'nowrap'}}>
                             <span aria-hidden="true">💬</span>
                             <span style={{position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden'}}>Messages</span>
-                            <span>{chatSummary.message_count}</span>
+                            <span>{formatNumber(chatSummary.message_count)}</span>
                         </div>
                         {/* Created date */}
                         <div title="Created" style={{display: 'flex', alignItems: 'center', gap: 4, fontSize: 15, color: '#666', whiteSpace: 'nowrap'}}>
@@ -456,7 +456,7 @@ function ChatPage() {
                         </div>
                         <div style={{marginBottom: 18}}>
                             <div style={{fontSize: 15, color: '#666', marginBottom: 4}}>
-                                <span style={{fontWeight: 500}}>Participants ({participantNames.length}):</span>
+                                <span style={{fontWeight: 500}}>Participants ({formatNumber(participantNames.length)}):</span>
                             </div>
                             <div style={{
                                 display: 'flex',
@@ -479,7 +479,7 @@ function ChatPage() {
                                             fontWeight: 500,
                                             margin: '0 4px 4px 0',
                                             boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-                                            border: '1px solid #e5e7eb',
+                                            border: 'none',
                                             maxWidth: 180,
                                             whiteSpace: 'nowrap',
                                             textOverflow: 'ellipsis',
@@ -492,7 +492,7 @@ function ChatPage() {
                             </div>
                         </div>
                         <div style={{fontSize: 15, color: '#666', marginBottom: 8}}>
-                            <span style={{marginRight: 12}}><span aria-hidden="true">💬</span> {chatSummary.message_count} messages</span>
+                            <span style={{marginRight: 12}}><span aria-hidden="true">💬</span> {formatNumber(chatSummary.message_count)} messages</span>
                             <span><span aria-hidden="true">📅</span> {chatSummary.estimated_created_at ? new Date(chatSummary.estimated_created_at).toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'}) : '—'}</span>
                         </div>
                     </div>
