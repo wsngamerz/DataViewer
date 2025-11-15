@@ -75,7 +75,9 @@ function ChatPage() {
         }
     };
 
-    const allMessages = data?.pages.flatMap(page => page.messages || []) || [];
+    const allMessages = (data?.pages.flatMap(page => page.messages || []) || [])
+        .slice() // create a shallow copy to avoid mutating original
+        .sort((a, b) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime());
     const chat = chatData?.chat;
     const chatTitle = chat?.title || chatid;
     const participantNames = chat?.participant_ids || []; // the ids are actually names for now. this will be fixed when we have accounts data
