@@ -262,7 +262,7 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 		// TOOD: Map participant names to IDs properly
 		var participantIDs []string
 		for _, participant := range messageData.Participants {
-			participantIDs = append(participantIDs, participant.Name)
+			participantIDs = append(participantIDs, fixTextEncoding(participant.Name))
 		}
 
 		newChatModel := models.Chat{
@@ -284,7 +284,7 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 		messageModel := models.Message{
 			BaseModel: models.BaseModel{ID: uuid.New().String()},
 			ChatID:    chatModel.ID,
-			SenderID:  message.SenderName, // TODO: Map sender name to ID properly
+			SenderID:  fixTextEncoding(message.SenderName), // TODO: Map sender name to ID properly
 			Content:   fixTextEncoding(message.Content),
 			SentAt:    time.UnixMilli(int64(message.Timestamp)),
 		}
