@@ -1,9 +1,7 @@
-import React from 'react';
 import {createFileRoute, Link} from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { getApiFacebookChatsOptions } from '@/client/@tanstack/react-query.gen';
 import type { ChatDto } from '@/client/types.gen';
-import {type ColumnDef, flexRender, getCoreRowModel, useReactTable} from '@tanstack/react-table';
 
 export const Route = createFileRoute('/chats')({
     component: ChatsPage,
@@ -14,55 +12,40 @@ function ChatsPage() {
     const { data, isLoading, error } = useQuery(getApiFacebookChatsOptions());
     const chats: ChatDto[] = data?.chats ?? [];
 
-    // Define columns for the table
-    const columns: ColumnDef<ChatDto, any>[] = React.useMemo(
-        () => [
-            { accessorKey: 'id', header: 'Chat ID', cell: info => <Link to={`/chat/$chatid`} params={{chatid: info.getValue()}}>{info.getValue()}</Link> },
-            { accessorKey: 'title', header: 'Title' },
-            { accessorKey: 'created_at', header: 'Created At' },
-            // Add more columns as needed based on ChatDto
-        ],
-        []
-    );
-
-    // Provide filterFns to satisfy TableOptions
-    const table = useReactTable({
-        data: chats,
-        columns,
-        filterFns: {},
-        getCoreRowModel: getCoreRowModel(),
-    });
-
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading chats</div>;
 
     return (
-        <div>
-            <h1>Chats</h1>
-            <table>
-                <thead>
-                {table.getHeaderGroups().map(headerGroup => (
-                    <tr key={headerGroup.id}>
-                        {headerGroup.headers.map(header => (
-                            <th key={header.id}>
-                                {flexRender(header.column.columnDef.header, header.getContext())}
-                            </th>
-                        ))}
-                    </tr>
+        <div style={{ maxWidth: 600, margin: '0 auto', padding: '2rem 1rem' }}>
+            <h1 style={{ marginBottom: '1.5rem' }}>Chats</h1>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {chats.length === 0 && <div>No chats found.</div>}
+                {chats.map(chat => (
+                    <Link
+                        key={chat.id}
+                        to="/chat/$chatid"
+                        params={{ chatid: chat.id }}
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            padding: '1rem',
+                            borderRadius: 8,
+                            border: '1px solid #e0e0e0',
+                            background: '#fff',
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                            transition: 'box-shadow 0.15s, border 0.15s',
+                        }}
+                        onMouseOver={e => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.10)')}
+                        onMouseOut={e => (e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)')}
+                    >
+                        <span style={{ fontWeight: 600, fontSize: '1.1rem', marginBottom: 4 }}>{chat.title || 'Untitled Chat'}</span>
+                        <span style={{ color: '#888', fontSize: '0.95rem' }}>Created: {chat.created_at ? new Date(chat.created_at).toLocaleString() : 'Unknown'}</span>
+                        <span style={{ color: '#bbb', fontSize: '0.85rem', marginTop: 2 }}>ID: {chat.id}</span>
+                    </Link>
                 ))}
-                </thead>
-                <tbody>
-                {table.getRowModel().rows.map(row => (
-                    <tr key={row.id}>
-                        {row.getVisibleCells().map(cell => (
-                            <td key={cell.id}>
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            </div>
         </div>
     );
 }
