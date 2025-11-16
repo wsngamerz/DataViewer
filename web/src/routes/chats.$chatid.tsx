@@ -44,6 +44,51 @@ function formatCallDuration(seconds: number): string {
     return out.join(' ');
 }
 
+// Helper to highlight @mentions of participants in message content
+function renderContentWithMentions(content: string, participantNames: string[]): React.ReactNode {
+    if (!content) return null;
+    // Sort names by length descending to avoid partial matches
+    const sortedNames = [...participantNames].sort((a, b) => b.length - a.length);
+    // Build regex for all names, escaping special regex chars
+    const namePattern = sortedNames.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+    if (!namePattern) return content;
+    // Regex: match @Name (with word boundary or end), case-insensitive
+    const mentionRegex = new RegExp(`@(${namePattern})(?=\\b|$)`, 'gi');
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = mentionRegex.exec(content)) !== null) {
+        const [fullMatch, name] = match;
+        // Push text before the match
+        if (match.index > lastIndex) {
+            parts.push(content.slice(lastIndex, match.index));
+        }
+        // Highlighted mention
+        parts.push(
+            <span
+                key={match.index}
+                style={{
+                    background: '#ede9fe',
+                    color: '#7c3aed',
+                    borderRadius: 5,
+                    padding: '0 4px',
+                    fontWeight: 600,
+                    display: 'inline-block',
+                }}
+                title={`Mention: ${name}`}
+            >
+                {fullMatch}
+            </span>
+        );
+        lastIndex = match.index + fullMatch.length;
+    }
+    // Push remaining text
+    if (lastIndex < content.length) {
+        parts.push(content.slice(lastIndex));
+    }
+    return parts;
+}
+
 function ChatPage() {
     const {chatid} = Route.useParams();
     const navigate = useNavigate();
@@ -461,9 +506,9 @@ function ChatPage() {
                                                                     wordBreak: 'break-word',
                                                                     display: 'flex',
                                                                     alignItems: 'center',
-                                                                    gap: 8
+                                                                    gap: 4
                                                                 }}>
-                                                                    {msg.content}
+                                                                    {renderContentWithMentions(msg.content, participantNames)}
                                                                     {/* Call Duration badge */}
                                                                     {msg.call_duration && (
                                                                         <span title={`Call duration: ${formatCallDuration(msg.call_duration)}`} style={{
