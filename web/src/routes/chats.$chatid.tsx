@@ -357,23 +357,23 @@ function ChatPage() {
                                     width: '100%',
                                 }}>
                                     {group.messages.map((msg, idx) => {
-                                        // Border radius logic
+                                        // Border radius logic (fix: only first/last in group get full rounding)
                                         const isFirst = idx === 0;
                                         const isLast = idx === group.messages.length - 1;
                                         let borderStyle;
-                                        if (isOwn) {
+                                        if (!isOwn) {
                                             borderStyle = {
-                                                borderTopRightRadius: isFirst ? 16 : 6,
-                                                borderBottomRightRadius: isLast ? 16 : 6,
-                                                borderTopLeftRadius: 16,
-                                                borderBottomLeftRadius: 16,
+                                                borderTopRightRadius: 16,
+                                                borderBottomRightRadius: 16,
+                                                borderTopLeftRadius: isFirst ? 16 : 6,
+                                                borderBottomLeftRadius: isLast ? 16 : 6,
                                             };
                                         } else {
                                             borderStyle = {
-                                                borderTopLeftRadius: isFirst ? 16 : 6,
-                                                borderBottomLeftRadius: isLast ? 16 : 6,
-                                                borderTopRightRadius: 16,
-                                                borderBottomRightRadius: 16,
+                                                borderTopLeftRadius: 16,
+                                                borderBottomLeftRadius: 16,
+                                                borderTopRightRadius: isFirst ? 16 : 6,
+                                                borderBottomRightRadius: isLast ? 16 : 6,
                                             };
                                         }
                                         // Refactor margin logic to avoid negated condition
