@@ -6,6 +6,15 @@ import {getAvatarColor, getAvatarInitials, formatNumber} from '../lib/utils';
 import {UserProvider, useUser} from '../lib/user-context';
 import {useEffect, useState} from 'react';
 
+const SORT_OPTIONS = [
+    { value: 'az', label: 'A-Z' },
+    { value: 'za', label: 'Z-A' },
+    { value: 'newest_message', label: 'Newest Message' },
+    { value: 'oldest_message', label: 'Oldest Message' },
+    { value: 'newest_created', label: 'Newest Created' },
+    { value: 'oldest_created', label: 'Oldest Created' },
+];
+
 export const Route = createFileRoute('/chats')({
     component: ChatsPage,
 });
@@ -109,13 +118,38 @@ function SettingsModal({open, onClose}: { open: boolean; onClose: () => void }) 
 
 function ChatsPage() {
     const {data, isLoading, error} = useQuery(getApiFacebookChatsSummariesOptions());
+    const [sortOrder, setSortOrder] = useState('az');
     const chats: ChatSummaryDto[] = (data?.summaries ?? []).slice().sort((a, b) => {
         const nameA = (a.title || '').trim();
         const nameB = (b.title || '').trim();
-        if (!nameA && nameB) return 1;   // a is untitled, b is titled
-        if (nameA && !nameB) return -1;  // a is titled, b is untitled
-        if (!nameA && !nameB) return 0;  // both untitled
-        return nameA.localeCompare(nameB, undefined, {sensitivity: 'base'});
+        if (sortOrder === 'az') {
+            if (!nameA && nameB) return 1;
+            if (nameA && !nameB) return -1;
+            if (!nameA && !nameB) return 0;
+            return nameA.localeCompare(nameB, undefined, {sensitivity: 'base'});
+        } else if (sortOrder === 'za') {
+            if (!nameA && nameB) return 1;
+            if (nameA && !nameB) return -1;
+            if (!nameA && !nameB) return 0;
+            return nameB.localeCompare(nameA, undefined, {sensitivity: 'base'});
+        } else if (sortOrder === 'newest_message') {
+            const aTime = a.last_message?.sent_at ? new Date(a.last_message.sent_at).getTime() : 0;
+            const bTime = b.last_message?.sent_at ? new Date(b.last_message.sent_at).getTime() : 0;
+            return bTime - aTime;
+        } else if (sortOrder === 'oldest_message') {
+            const aTime = a.last_message?.sent_at ? new Date(a.last_message.sent_at).getTime() : 0;
+            const bTime = b.last_message?.sent_at ? new Date(b.last_message.sent_at).getTime() : 0;
+            return aTime - bTime;
+        } else if (sortOrder === 'newest_created') {
+            const aTime = a.estimated_created_at ? new Date(a.estimated_created_at).getTime() : 0;
+            const bTime = b.estimated_created_at ? new Date(b.estimated_created_at).getTime() : 0;
+            return bTime - aTime;
+        } else if (sortOrder === 'oldest_created') {
+            const aTime = a.estimated_created_at ? new Date(a.estimated_created_at).getTime() : 0;
+            const bTime = b.estimated_created_at ? new Date(b.estimated_created_at).getTime() : 0;
+            return aTime - bTime;
+        }
+        return 0;
     });
     const [settingsOpen, setSettingsOpen] = useState(false);
     const match = useMatch({from: '/chats/$chatid', shouldThrow: false});
@@ -154,25 +188,47 @@ function ChatsPage() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        marginBottom: '1.5rem'
+                        marginBottom: '1.5rem',
+                        gap: 8,
                     }}>
                         <h1 style={{fontSize: '1.3rem', margin: 0}}>Chats</h1>
-                        <button
-                            aria-label="Open settings"
-                            onClick={() => setSettingsOpen(true)}
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                padding: 0,
-                                marginLeft: 8,
-                                color: '#888',
-                                fontSize: 22,
-                                display: 'flex',
-                                alignItems: 'center',
-                            }}
-                        >⚙️
-                        </button>
+                        <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                            <select
+                                aria-label="Sort chats"
+                                value={sortOrder}
+                                onChange={e => setSortOrder(e.target.value)}
+                                style={{
+                                    fontSize: 15,
+                                    border: '1px solid #e5e7eb',
+                                    borderRadius: 6,
+                                    padding: '2px 8px',
+                                    background: '#f9fafb',
+                                    color: '#444',
+                                    cursor: 'pointer',
+                                    outline: 'none',
+                                }}
+                            >
+                                {SORT_OPTIONS.map(opt => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
+                            </select>
+                            <button
+                                aria-label="Open settings"
+                                onClick={() => setSettingsOpen(true)}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    padding: 0,
+                                    marginLeft: 0,
+                                    color: '#888',
+                                    fontSize: 22,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                }}
+                            >⚙️
+                            </button>
+                        </div>
                     </div>
                     {/* Chat list */}
                     <nav style={{display: 'flex', flexDirection: 'column', gap: 0}}>
