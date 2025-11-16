@@ -97,6 +97,7 @@ function ChatPage() {
     const isInitialLoad = useRef(true);
     const prevDataLength = useRef(0);
     const [showModal, setShowModal] = useState(false);
+    const [inspectedMessage, setInspectedMessage] = useState<MessageDto | null>(null); // For message info modal
 
     const {data: summaryData, status: summaryStatus} = useQuery(getApiFacebookChatsByIdSummaryOptions({path: {id: chatid}}));
 
@@ -335,12 +336,14 @@ function ChatPage() {
                             <div style={{
                                 display: 'flex',
                                 flexDirection: isOwn ? 'row-reverse' : 'row',
-                                alignItems: 'flex-end'
+                                alignItems: 'flex-end',
+                                width: '100%',
                             }}>
                                 <div style={{
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    alignItems: isOwn ? 'flex-end' : 'flex-start'
+                                    alignItems: isOwn ? 'flex-end' : 'flex-start',
+                                    width: '100%',
                                 }}>
                                     {group.messages.map((msg, idx) => {
                                         // Border radius logic
@@ -424,12 +427,19 @@ function ChatPage() {
                                             );
                                         }
                                         return (
-                                            <div key={msg.id} style={{
-                                                display: 'flex',
-                                                flexDirection: isOwn ? 'row-reverse' : 'row',
-                                                alignItems: 'flex-start',
-                                                marginTop: isFirst ? 0 : 2
-                                            }}>
+                                            <div
+                                                key={msg.id}
+                                                className="message-bubble-hover-wrap"
+                                                style={{
+                                                    width: '100%',
+                                                    display: 'flex',
+                                                    flexDirection: isOwn ? 'row-reverse' : 'row',
+                                                    alignItems: 'flex-start',
+                                                    marginTop: isFirst ? 0 : 2,
+                                                    position: 'relative',
+                                                    minHeight: 48, // Ensures a minimum clickable/hoverable area
+                                                }}
+                                            >
                                                 {/* Avatar only for first message in group */}
                                                 {isFirst && (
                                                     <div style={{
@@ -466,6 +476,44 @@ function ChatPage() {
                                                         boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
                                                         position: 'relative',
                                                     }}>
+                                                        {/* Info icon always rendered, shown on hover/focus via CSS */}
+                                                        <button
+                                                            aria-label="Show message info"
+                                                            onClick={e => { e.stopPropagation(); setInspectedMessage(msg); }}
+                                                            className={`message-info-btn ${isOwn ? 'own' : 'other'}`}
+                                                            tabIndex={0}
+                                                            style={{
+                                                                position: 'absolute',
+                                                                top: 0,
+                                                                left: isOwn ? '-32px' : 'auto', // 24px padding from edge
+                                                                right: isOwn ? 'auto' : '-32px',
+                                                                background: '#ede9fe',
+                                                                color: '#7c3aed',
+                                                                border: '1px solid #c4b5fd',
+                                                                borderRadius: 8,
+                                                                width: 24,
+                                                                height: 24,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                fontSize: 15,
+                                                                boxShadow: '0 1px 4px rgba(0,0,0,0.07)',
+                                                                cursor: 'pointer',
+                                                                zIndex: 10,
+                                                                transition: 'background 0.13s',
+                                                                opacity: 0,
+                                                                pointerEvents: 'none',
+                                                            }}
+                                                        >
+                                                            <span style={{fontWeight: 700}}>i</span>
+                                                        </button>
+                                                        <style>{`
+                                                    .message-bubble-hover-wrap:hover .message-info-btn,
+                                                    .message-bubble-hover-wrap:focus-within .message-info-btn {
+                                                        opacity: 1 !important;
+                                                        pointer-events: auto !important;
+                                                    }
+                                                `}</style>
                                                         {/* Name only for first message in group */}
                                                         {isFirst && !msg.is_unsent && !isMsgEmpty && (
                                                             <div style={{
@@ -736,6 +784,76 @@ function ChatPage() {
                             <span style={{marginRight: 12}}><span aria-hidden="true">💬</span> {formatNumber(chatSummary.message_count)} messages</span>
                             <span><span aria-hidden="true">📅</span> {chatSummary.estimated_created_at ? new Date(chatSummary.estimated_created_at).toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'}) : '—'}</span>
                         </div>
+                        {chatSummary && (
+                            <details style={{marginTop: 18, fontSize: 14}}>
+                                <summary>Show raw chat summary JSON</summary>
+                                <pre style={{background: '#f3f4f6', borderRadius: 8, padding: 12, marginTop: 8, overflowX: 'auto', fontSize: 13}}>
+{JSON.stringify(chatSummary, null, 2)}
+                                </pre>
+                            </details>
+                        )}
+                    </div>
+                </dialog>
+            )}
+            {/* Message info modal */}
+            {inspectedMessage && (
+                <dialog
+                    open
+                    aria-modal="true"
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        background: 'rgba(0,0,0,0.32)',
+                        zIndex: 2000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: 'none',
+                        padding: 0,
+                    }}
+                    onClick={() => setInspectedMessage(null)}
+                >
+                    <div
+                        role="document"
+                        tabIndex={0}
+                        style={{
+                            background: '#fff',
+                            borderRadius: 12,
+                            boxShadow: '0 4px 32px rgba(0,0,0,0.12)',
+                            padding: 32,
+                            minWidth: 320,
+                            maxWidth: "max(520px, 60dvw)",
+                            width: '90vw',
+                            maxHeight: '80vh',
+                            overflowY: 'auto',
+                            position: 'relative',
+                            outline: 'none',
+                        }}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setInspectedMessage(null)}
+                            aria-label="Close"
+                            style={{
+                                position: 'absolute',
+                                top: 16,
+                                right: 16,
+                                background: 'none',
+                                border: 'none',
+                                fontSize: 22,
+                                cursor: 'pointer',
+                                color: '#888',
+                            }}
+                        >
+                            &times;
+                        </button>
+                        <h2 style={{fontSize: 18, marginBottom: 12, color: '#7c3aed'}}>Message JSON</h2>
+                        <pre style={{background: '#f3f4f6', borderRadius: 8, padding: 16, marginTop: 8, overflowX: 'auto', fontSize: 13}}>
+{JSON.stringify(inspectedMessage, null, 2)}
+                        </pre>
                     </div>
                 </dialog>
             )}
