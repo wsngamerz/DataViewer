@@ -18,7 +18,7 @@ import (
 	"github.com/wsngamerz/dataviewer/internal/models"
 )
 
-var messageFilePattern = regexp.MustCompile(`^messages/(inbox|archived_threads|e2ee_cutover)/([^/]+)/message_(\d+)\.json$`)
+var messageFilePattern = regexp.MustCompile(`.*messages/(inbox|archived_threads|filtered_threads|message_requests|e2ee_cutover)/([^/]+)/message_(\d+)\.json$`)
 
 type usecase struct {
 	facebookRepo domain.FacebookRepo
