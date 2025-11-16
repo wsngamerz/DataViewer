@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ImportRouteImport } from './routes/import'
 import { Route as ChatsRouteImport } from './routes/chats'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ChatsIndexRouteImport } from './routes/chats.index'
@@ -19,6 +20,11 @@ import { Route as ChatsChatidRouteImport } from './routes/chats.$chatid'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 
+const ImportRoute = ImportRouteImport.update({
+  id: '/import',
+  path: '/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChatsRoute = ChatsRouteImport.update({
   id: '/chats',
   path: '/chats',
@@ -68,6 +74,7 @@ const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chats': typeof ChatsRouteWithChildren
+  '/import': typeof ImportRoute
   '/chats/$chatid': typeof ChatsChatidRoute
   '/demo/storybook': typeof DemoStorybookRoute
   '/demo/table': typeof DemoTableRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/import': typeof ImportRoute
   '/chats/$chatid': typeof ChatsChatidRoute
   '/demo/storybook': typeof DemoStorybookRoute
   '/demo/table': typeof DemoTableRoute
@@ -90,6 +98,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chats': typeof ChatsRouteWithChildren
+  '/import': typeof ImportRoute
   '/chats/$chatid': typeof ChatsChatidRoute
   '/demo/storybook': typeof DemoStorybookRoute
   '/demo/table': typeof DemoTableRoute
@@ -103,6 +112,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/chats'
+    | '/import'
     | '/chats/$chatid'
     | '/demo/storybook'
     | '/demo/table'
@@ -113,6 +123,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/import'
     | '/chats/$chatid'
     | '/demo/storybook'
     | '/demo/table'
@@ -124,6 +135,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/chats'
+    | '/import'
     | '/chats/$chatid'
     | '/demo/storybook'
     | '/demo/table'
@@ -136,6 +148,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatsRoute: typeof ChatsRouteWithChildren
+  ImportRoute: typeof ImportRoute
   DemoStorybookRoute: typeof DemoStorybookRoute
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
@@ -145,6 +158,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/import': {
+      id: '/import'
+      path: '/import'
+      fullPath: '/import'
+      preLoaderRoute: typeof ImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chats': {
       id: '/chats'
       path: '/chats'
@@ -226,6 +246,7 @@ const ChatsRouteWithChildren = ChatsRoute._addFileChildren(ChatsRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatsRoute: ChatsRouteWithChildren,
+  ImportRoute: ImportRoute,
   DemoStorybookRoute: DemoStorybookRoute,
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,

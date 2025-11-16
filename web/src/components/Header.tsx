@@ -145,6 +145,19 @@ export default function Header() {
             <span className="font-medium">Chats</span>
           </Link>
 
+          <Link
+            to="/import"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+            activeProps={{
+              className:
+                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+            }}
+          >
+            <ClipboardType size={20} />
+            <span className="font-medium">Import</span>
+          </Link>
+
           {/* Demo Links End */}
         </nav>
       </aside>
