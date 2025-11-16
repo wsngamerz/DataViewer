@@ -474,6 +474,50 @@ function ChatPage() {
                                                                 }}>{new Date(msg.sent_at).toLocaleString()}</div>
                                                             </>
                                                         )}
+                                                        {/* Reactions group (bottom right/left of bubble) */}
+                                                        {msg.reactions && msg.reactions.length > 0 && (
+                                                            <div
+                                                                style={{
+                                                                    position: 'absolute',
+                                                                    bottom: -18,
+                                                                    left: isOwn ? 12 : 'auto',
+                                                                    right: isOwn ? 'auto' : 12,
+                                                                    display: 'flex',
+                                                                    gap: 2,
+                                                                    zIndex: 2,
+                                                                    background: 'rgba(255,255,255,0.95)',
+                                                                    borderRadius: 12,
+                                                                    boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                                                                    padding: '1px 6px',
+                                                                    fontSize: 15,
+                                                                    border: '1px solid #e5e7eb',
+                                                                    alignItems: 'center',
+                                                                }}
+                                                            >
+                                                                {Object.entries(
+                                                                    msg.reactions.reduce((acc, r) => {
+                                                                        acc[r.reaction] = acc[r.reaction] || [];
+                                                                        acc[r.reaction].push(r.actor);
+                                                                        return acc;
+                                                                    }, {} as Record<string, string[]>)
+                                                                ).map(([emoji, users]) => (
+                                                                    <span
+                                                                        key={emoji}
+                                                                        title={users.length === 1 ? users[0] : users.join(', ')}
+                                                                        style={{
+                                                                            display: 'inline-flex',
+                                                                            alignItems: 'center',
+                                                                            padding: '0 5px',
+                                                                            fontSize: 15,
+                                                                            minWidth: 22,
+                                                                            justifyContent: 'center',
+                                                                        }}
+                                                                    >
+                                                                        {emoji} {users.length > 1 && <span style={{fontSize: 12, marginLeft: 2}}>{users.length}</span>}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     {/* Media/Share box below bubble, compact and aligned (only for normal messages) */}
                                                     {!badge && ((msg.media && msg.media.length > 0) || msg.share) && (
