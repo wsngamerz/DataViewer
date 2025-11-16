@@ -32,6 +32,18 @@ function groupMessages(messages: MessageDto[]) {
     return groups;
 }
 
+// Helper to format call duration in seconds as 1h 5m 30s, 5m 2s, 45s, etc.
+function formatCallDuration(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    let out = [];
+    if (h > 0) out.push(`${h}h`);
+    if (m > 0) out.push(`${m}m`);
+    if (s > 0 || out.length === 0) out.push(`${s}s`);
+    return out.join(' ');
+}
+
 function ChatPage() {
     const {chatid} = Route.useParams();
     const navigate = useNavigate();
@@ -454,7 +466,7 @@ function ChatPage() {
                                                                     {msg.content}
                                                                     {/* Call Duration badge */}
                                                                     {msg.call_duration && (
-                                                                        <span title={`Call duration: ${msg.call_duration} seconds`} style={{
+                                                                        <span title={`Call duration: ${formatCallDuration(msg.call_duration)}`} style={{
                                                                             background: '#e0e7ff',
                                                                             color: '#3730a3',
                                                                             borderRadius: 8,
@@ -462,7 +474,7 @@ function ChatPage() {
                                                                             fontSize: 12,
                                                                             marginLeft: 6
                                                                         }}>
-                                                                            📞 {Math.floor(msg.call_duration / 60)}:{(msg.call_duration % 60).toString().padStart(2, '0')}
+                                                                            📞 {formatCallDuration(msg.call_duration)}
                                                                         </span>
                                                                     )}
                                                                 </div>
