@@ -16,9 +16,56 @@ import (
 	"github.com/wsngamerz/dataviewer/internal/dtos"
 	"github.com/wsngamerz/dataviewer/internal/errs"
 	"github.com/wsngamerz/dataviewer/internal/models"
+	"github.com/wsngamerz/dataviewer/pkg/enums"
 )
 
 var messageFilePattern = regexp.MustCompile(`.*messages/(inbox|archived_threads|filtered_threads|message_requests|e2ee_cutover)/([^/]+)/message_(\d+)\.json$`)
+
+type MessageMediaEntry struct {
+	URI               string `json:"uri"`
+	CreationTimestamp int    `json:"creation_timestamp"`
+}
+
+type MessageShareEntry struct {
+	Link      string `json:"link"`
+	ShareText string `json:"share_text"`
+}
+
+type MessageReactionEntry struct {
+	Reaction string `json:"reaction"`
+	Actor    string `json:"actor"`
+}
+
+type MessageEntry struct {
+	SenderName                        string                 `json:"sender_name"`
+	Timestamp                         int                    `json:"timestamp_ms"`
+	Content                           string                 `json:"content"`
+	Photos                            []MessageMediaEntry    `json:"photos"`
+	Gifs                              []MessageMediaEntry    `json:"gifs"`
+	Videos                            []MessageMediaEntry    `json:"videos"`
+	Audios                            []MessageMediaEntry    `json:"audio_files"`
+	Sticker                           MessageMediaEntry      `json:"sticker"`
+	Share                             MessageShareEntry      `json:"share"`
+	Reactions                         []MessageReactionEntry `json:"reactions"`
+	CallDuration                      int                    `json:"call_duration"`
+	IsUnsent                          bool                   `json:"is_unsent"`
+	IsGeoblockedForViewer             bool                   `json:"is_geoblocked_for_viewer"`
+	IsUnsentImageByMessengerKidParent bool                   `json:"is_unsent_image_by_messenger_kid_parent"`
+}
+
+type ParticipantEntry struct {
+	Name string `json:"name"`
+}
+
+type MessageFile struct {
+	Participants       []ParticipantEntry `json:"participants"`
+	Messages           []MessageEntry     `json:"messages"`
+	Title              string             `json:"title"`
+	Image              MessageMediaEntry  `json:"image"`
+	ThreadPath         string             `json:"thread_path"`
+	IsStillParticipant bool               `json:"is_still_participant"`
+	MagicWords         []string           `json:"magic_words"`
+}
 
 type usecase struct {
 	facebookRepo domain.FacebookRepo
@@ -217,27 +264,6 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 		Str("fileNumber", fileNumber).
 		Msg("Matched message file")
 
-	type MessageEntry struct {
-		SenderName                        string `json:"sender_name"`
-		Timestamp                         int    `json:"timestamp_ms"`
-		Content                           string `json:"content"`
-		IsGeoblockedForViewer             bool   `json:"is_geoblocked_for_viewer"`
-		IsUnsentImageByMessengerKidParent bool   `json:"is_unsent_image_by_messenger_kid_parent"`
-	}
-
-	type ParticipantEntry struct {
-		Name string `json:"name"`
-	}
-
-	type MessageFile struct {
-		Participants       []ParticipantEntry `json:"participants"`
-		Messages           []MessageEntry     `json:"messages"`
-		Title              string             `json:"title"`
-		ThreadPath         string             `json:"thread_path"`
-		IsStillParticipant bool               `json:"is_still_participant"`
-		MagicWords         []string           `json:"magic_words"`
-	}
-
 	var messageData MessageFile
 	rc, err := file.Open()
 	if err != nil {
@@ -272,6 +298,15 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 			ThreadPath:     messageData.ThreadPath,
 		}
 		newChatModel.UpdateTimestamps()
+
+		if messageData.Image.URI != "" {
+			newChatModel.Image = &models.Media{
+				URL:              fixTextEncoding(messageData.Image.URI),
+				Type:             enums.MediaTypeImage,
+				CreatedTimestamp: time.UnixMilli(int64(messageData.Image.CreationTimestamp * 1000)),
+			}
+		}
+
 		if err := u.facebookRepo.CreateChat(ctx, newChatModel); err != nil {
 			return err
 		}
@@ -282,12 +317,24 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 	messages := make([]models.Message, 0, len(messageData.Messages))
 	for _, message := range messageData.Messages {
 		messageModel := models.Message{
-			BaseModel: models.BaseModel{ID: uuid.New().String()},
-			ChatID:    chatModel.ID,
-			SenderID:  fixTextEncoding(message.SenderName), // TODO: Map sender name to ID properly
-			Content:   fixTextEncoding(message.Content),
-			SentAt:    time.UnixMilli(int64(message.Timestamp)),
+			BaseModel:    models.BaseModel{ID: uuid.New().String()},
+			Content:      fixTextEncoding(message.Content),
+			SentAt:       time.UnixMilli(int64(message.Timestamp)),
+			SenderID:     fixTextEncoding(message.SenderName), // TODO: Map sender name to ID properly
+			ChatID:       chatModel.ID,
+			Reactions:    mapReactions(message.Reactions),
+			Media:        mapAllMedia(message),
+			IsUnsent:     message.IsUnsent,
+			CallDuration: message.CallDuration,
 		}
+
+		if message.Share.Link != "" {
+			messageModel.Share = &models.Share{
+				Link:      fixTextEncoding(message.Share.Link),
+				ShareText: fixTextEncoding(message.Share.ShareText),
+			}
+		}
+
 		messageModel.UpdateTimestamps()
 		messages = append(messages, messageModel)
 	}
@@ -296,6 +343,50 @@ func (u usecase) processMessageFile(ctx context.Context, file *zip.File, message
 		return err
 	}
 	return nil
+}
+
+func mapAllMedia(message MessageEntry) []*models.Media {
+	var media []*models.Media
+	media = append(media, mapMediaEntries(message.Photos, enums.MediaTypeImage)...)
+	media = append(media, mapMediaEntries(message.Gifs, enums.MediaTypeGIF)...)
+	media = append(media, mapMediaEntries(message.Videos, enums.MediaTypeVideo)...)
+	media = append(media, mapMediaEntries(message.Audios, enums.MediaTypeAudio)...)
+
+	// Handle sticker as a single media entry
+	if message.Sticker.URI != "" {
+		media = append(media, &models.Media{
+			URL:              fixTextEncoding(message.Sticker.URI),
+			Type:             enums.MediaTypeSticker,
+			CreatedTimestamp: time.UnixMilli(int64(message.Sticker.CreationTimestamp * 1000)),
+		})
+	}
+
+	return media
+}
+
+func mapMediaEntries(entries []MessageMediaEntry, mediaType enums.MediaType) []*models.Media {
+	media := make([]*models.Media, 0, len(entries))
+	for _, entry := range entries {
+		if entry.URI != "" {
+			media = append(media, &models.Media{
+				URL:              fixTextEncoding(entry.URI),
+				Type:             mediaType,
+				CreatedTimestamp: time.UnixMilli(int64(entry.CreationTimestamp * 1000)),
+			})
+		}
+	}
+	return media
+}
+
+func mapReactions(entries []MessageReactionEntry) []*models.Reaction {
+	reactions := make([]*models.Reaction, 0, len(entries))
+	for _, entry := range entries {
+		reactions = append(reactions, &models.Reaction{
+			Reaction: fixTextEncoding(entry.Reaction),
+			Actor:    fixTextEncoding(entry.Actor),
+		})
+	}
+	return reactions
 }
 
 func createImportFromDTO(input domain.CreateFacebookImport) (models.Import, error) {

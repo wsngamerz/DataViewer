@@ -313,6 +313,59 @@ function ChatPage() {
                                         } else {
                                             marginLeft = isFirst ? 0 : 48;
                                         }
+                                        // Helper: is message empty
+                                        const isMsgEmpty = (
+                                            (!msg.content || msg.content.trim() === '') &&
+                                            !msg.call_duration &&
+                                            !msg.is_unsent &&
+                                            (!msg.media || msg.media.length === 0) &&
+                                            !msg.share
+                                        );
+                                        // Determine bubble style for special states
+                                        let bubbleStyle = {
+                                            background: isOwn ? '#6366f1' : '#fff',
+                                            color: isOwn ? '#fff' : '#222',
+                                            border: isOwn ? '1.5px solid #6366f1' : '1px solid #e5e7eb',
+                                            ...borderStyle,
+                                        };
+                                        let badge = null;
+                                        if (msg.is_unsent) {
+                                            bubbleStyle = {
+                                                background: '#fee2e2',
+                                                color: '#991b1b',
+                                                border: '1.5px solid #fca5a5',
+                                                ...borderStyle,
+                                            };
+                                            badge = (
+                                                <span style={{
+                                                    fontWeight: 600,
+                                                    fontSize: 14,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 6,
+                                                }}>
+                                                    🕳️ Unsent
+                                                </span>
+                                            );
+                                        } else if (isMsgEmpty) {
+                                            bubbleStyle = {
+                                                background: '#fef9c3',
+                                                color: '#a16207',
+                                                border: '1.5px solid #fde68a',
+                                                ...borderStyle,
+                                            };
+                                            badge = (
+                                                <span style={{
+                                                    fontWeight: 600,
+                                                    fontSize: 14,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 6,
+                                                }}>
+                                                    ⚠️ No information
+                                                </span>
+                                            );
+                                        }
                                         return (
                                             <div key={msg.id} style={{
                                                 display: 'flex',
@@ -338,38 +391,125 @@ function ChatPage() {
                                                         {getAvatarInitials(msg.sender_id)}
                                                     </div>
                                                 )}
-                                                {/* Message bubble */}
+                                                {/* Message bubble and media/share box */}
                                                 <div style={{
-                                                    background: isOwn ? '#6366f1' : '#fff',
-                                                    color: isOwn ? '#fff' : '#222',
-                                                    borderRadius: 16,
-                                                    padding: '10px 16px',
-                                                    maxWidth: 420,
-                                                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-                                                    position: 'relative',
-                                                    border: isOwn ? '1.5px solid #6366f1' : '1px solid #e5e7eb',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: isOwn ? 'flex-end' : 'flex-start',
                                                     marginLeft,
                                                     marginRight,
-                                                    ...borderStyle,
+                                                    maxWidth: 420,
                                                 }}>
-                                                    {/* Name only for first message in group */}
-                                                    {isFirst && (
+                                                    {/* Message bubble */}
+                                                    <div style={{
+                                                        ...bubbleStyle,
+                                                        borderRadius: 16,
+                                                        padding: '10px 16px',
+                                                        maxWidth: 420,
+                                                        boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                                                        position: 'relative',
+                                                    }}>
+                                                        {/* Name only for first message in group */}
+                                                        {isFirst && !msg.is_unsent && !isMsgEmpty && (
+                                                            <div style={{
+                                                                fontWeight: 500,
+                                                                fontSize: 13,
+                                                                marginBottom: 2
+                                                            }}>{msg.sender_id}</div>
+                                                        )}
+                                                        {/* Special state badge or normal content */}
+                                                        {badge ? (
+                                                            <>
+                                                                {/* Name only for first message in group */}
+                                                                {isFirst && (
+                                                                    <div style={{
+                                                                        fontWeight: 500,
+                                                                        fontSize: 13,
+                                                                        marginBottom: 2
+                                                                    }}>{msg.sender_id}</div>
+                                                                )}
+                                                                <div style={{
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                    minHeight: 28,
+                                                                    marginBottom: 4
+                                                                }}>{badge}</div>
+                                                                <div style={{
+                                                                    fontSize: 11,
+                                                                    color: badge && badge.props && badge.props.style && badge.props.style.color ? badge.props.style.color : (isOwn ? '#d1d5db' : '#888'),
+                                                                    marginTop: 2,
+                                                                    textAlign: 'right'
+                                                                }}>{new Date(msg.sent_at).toLocaleString()}</div>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <div style={{
+                                                                    fontSize: 15,
+                                                                    wordBreak: 'break-word',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    gap: 8
+                                                                }}>
+                                                                    {msg.content}
+                                                                    {/* Call Duration badge */}
+                                                                    {msg.call_duration && (
+                                                                        <span title={`Call duration: ${msg.call_duration} seconds`} style={{
+                                                                            background: '#e0e7ff',
+                                                                            color: '#3730a3',
+                                                                            borderRadius: 8,
+                                                                            padding: '2px 8px',
+                                                                            fontSize: 12,
+                                                                            marginLeft: 6
+                                                                        }}>
+                                                                            📞 {Math.floor(msg.call_duration / 60)}:{(msg.call_duration % 60).toString().padStart(2, '0')}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <div style={{
+                                                                    fontSize: 11,
+                                                                    color: isOwn ? '#d1d5db' : '#888',
+                                                                    marginTop: 6,
+                                                                    textAlign: 'right'
+                                                                }}>{new Date(msg.sent_at).toLocaleString()}</div>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                    {/* Media/Share box below bubble, compact and aligned (only for normal messages) */}
+                                                    {!badge && ((msg.media && msg.media.length > 0) || msg.share) && (
                                                         <div style={{
-                                                            fontWeight: 500,
-                                                            fontSize: 13,
-                                                            marginBottom: 2
-                                                        }}>{msg.sender_id}</div>
+                                                            background: '#f3f4f6',
+                                                            border: '1px solid #e5e7eb',
+                                                            borderRadius: 7,
+                                                            padding: '2px 8px',
+                                                            marginTop: 4,
+                                                            marginBottom: 0,
+                                                            maxWidth: 260,
+                                                            fontSize: 12,
+                                                            color: '#444',
+                                                            display: 'flex',
+                                                            gap: 10,
+                                                            alignItems: 'center',
+                                                            boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+                                                        }}>
+                                                            {msg.media && msg.media.length > 0 && (
+                                                                <span
+                                                                    title={msg.media.map(m => `${m.media_type}: ${m.url}`).join('\n')}
+                                                                    style={{ cursor: 'pointer', fontSize: 14 }}
+                                                                >
+                                                                    🖼️ Media ({msg.media.length})
+                                                                </span>
+                                                            )}
+                                                            {msg.share && (
+                                                                <span
+                                                                    title={`Link: ${msg.share.link}\nText: ${msg.share.share_text}`}
+                                                                    style={{ cursor: 'pointer', fontSize: 14 }}
+                                                                >
+                                                                    🔗 Shared Link
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     )}
-                                                    <div style={{
-                                                        fontSize: 15,
-                                                        wordBreak: 'break-word'
-                                                    }}>{msg.content}</div>
-                                                    <div style={{
-                                                        fontSize: 11,
-                                                        color: isOwn ? '#d1d5db' : '#888',
-                                                        marginTop: 6,
-                                                        textAlign: 'right'
-                                                    }}>{new Date(msg.sent_at).toLocaleString()}</div>
                                                 </div>
                                             </div>
                                         );

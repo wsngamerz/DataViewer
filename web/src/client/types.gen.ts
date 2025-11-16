@@ -15,6 +15,7 @@ export type AccountDto = {
 export type ChatDto = {
     created_at: string;
     id: string;
+    image?: MediaDto;
     participant_ids: Array<string> | null;
     thread_path: string;
     title: string;
@@ -158,13 +159,34 @@ export type ImportDto = {
     status: string;
 };
 
+export type MediaDto = {
+    creation_timestamp: string;
+    media_type: string;
+    url: string;
+};
+
 export type MessageDto = {
+    call_duration?: number;
     chat_id: string;
     content: string;
     created_at: string;
     id: string;
+    is_unsent?: boolean;
+    media?: Array<MediaDto> | null;
+    reactions?: Array<ReactionDto> | null;
     sender_id: string;
     sent_at: string;
+    share?: ShareDto;
+};
+
+export type ReactionDto = {
+    actor: string;
+    reaction: string;
+};
+
+export type ShareDto = {
+    link: string;
+    share_text: string;
 };
 
 export type CreateImportResponseBodyWritable = {
