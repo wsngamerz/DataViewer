@@ -10,6 +10,7 @@ import (
 
 type FacebookUseCase interface {
 	GetImports(ctx context.Context) ([]dtos.ImportDTO, error)
+	GetImportByID(ctx context.Context, id string) (dtos.ImportDTO, error)
 	CreateImport(ctx context.Context, createImportRequest CreateFacebookImport) (dtos.ImportDTO, error)
 
 	GetAccounts(ctx context.Context) ([]dtos.AccountDTO, error)

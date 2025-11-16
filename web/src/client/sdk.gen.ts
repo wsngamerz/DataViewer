@@ -2,7 +2,7 @@
 
 import { type Client, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetApiFacebookAccountsData, GetApiFacebookAccountsErrors, GetApiFacebookAccountsResponses, GetApiFacebookChatsByIdData, GetApiFacebookChatsByIdErrors, GetApiFacebookChatsByIdMessagesData, GetApiFacebookChatsByIdMessagesErrors, GetApiFacebookChatsByIdMessagesResponses, GetApiFacebookChatsByIdResponses, GetApiFacebookChatsByIdSummaryData, GetApiFacebookChatsByIdSummaryErrors, GetApiFacebookChatsByIdSummaryResponses, GetApiFacebookChatsData, GetApiFacebookChatsErrors, GetApiFacebookChatsResponses, GetApiFacebookChatsSummariesData, GetApiFacebookChatsSummariesErrors, GetApiFacebookChatsSummariesResponses, GetApiFacebookImportsData, GetApiFacebookImportsErrors, GetApiFacebookImportsResponses, GetApiFacebookMessagesData, GetApiFacebookMessagesErrors, GetApiFacebookMessagesResponses, PostApiFacebookImportsData, PostApiFacebookImportsErrors, PostApiFacebookImportsResponses } from './types.gen';
+import type { GetApiFacebookAccountsData, GetApiFacebookAccountsErrors, GetApiFacebookAccountsResponses, GetApiFacebookChatsByIdData, GetApiFacebookChatsByIdErrors, GetApiFacebookChatsByIdMessagesData, GetApiFacebookChatsByIdMessagesErrors, GetApiFacebookChatsByIdMessagesResponses, GetApiFacebookChatsByIdResponses, GetApiFacebookChatsByIdSummaryData, GetApiFacebookChatsByIdSummaryErrors, GetApiFacebookChatsByIdSummaryResponses, GetApiFacebookChatsData, GetApiFacebookChatsErrors, GetApiFacebookChatsResponses, GetApiFacebookChatsSummariesData, GetApiFacebookChatsSummariesErrors, GetApiFacebookChatsSummariesResponses, GetApiFacebookImportsByIdData, GetApiFacebookImportsByIdErrors, GetApiFacebookImportsByIdResponses, GetApiFacebookImportsData, GetApiFacebookImportsErrors, GetApiFacebookImportsResponses, GetApiFacebookMessagesData, GetApiFacebookMessagesErrors, GetApiFacebookMessagesResponses, PostApiFacebookImportsData, PostApiFacebookImportsErrors, PostApiFacebookImportsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -100,6 +100,16 @@ export const postApiFacebookImports = <ThrowOnError extends boolean = false>(opt
             'Content-Type': null,
             ...options?.headers
         }
+    });
+};
+
+/**
+ * Get API facebook imports by ID
+ */
+export const getApiFacebookImportsById = <ThrowOnError extends boolean = false>(options: Options<GetApiFacebookImportsByIdData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiFacebookImportsByIdResponses, GetApiFacebookImportsByIdErrors, ThrowOnError>({
+        url: '/api/facebook/imports/{id}',
+        ...options
     });
 };
 

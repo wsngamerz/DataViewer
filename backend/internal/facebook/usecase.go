@@ -86,6 +86,15 @@ func (u usecase) GetImports(ctx context.Context) ([]dtos.ImportDTO, error) {
 	return models.ToDTOs(imports), nil
 }
 
+func (u usecase) GetImportByID(ctx context.Context, id string) (dtos.ImportDTO, error) {
+	importModel, err := u.facebookRepo.GetImport(ctx, id)
+	if err != nil {
+		return dtos.ImportDTO{}, err
+	}
+
+	return importModel.ToDTO(), nil
+}
+
 func (u usecase) CreateImport(ctx context.Context, input domain.CreateFacebookImport) (dtos.ImportDTO, error) {
 	importModel, err := createImportFromDTO(input)
 	if err != nil {

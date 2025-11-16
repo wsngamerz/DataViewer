@@ -124,6 +124,14 @@ export type GetChatsResponseBody = {
     chats: Array<ChatDto> | null;
 };
 
+export type GetImportByIdResponseBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    import: ImportDto;
+};
+
 export type GetImportsResponseBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -238,6 +246,10 @@ export type GetChatSummaryResponseBodyWritable = {
 
 export type GetChatsResponseBodyWritable = {
     chats: Array<ChatDto> | null;
+};
+
+export type GetImportByIdResponseBodyWritable = {
+    import: ImportDto;
 };
 
 export type GetImportsResponseBodyWritable = {
@@ -467,6 +479,33 @@ export type PostApiFacebookImportsResponses = {
 };
 
 export type PostApiFacebookImportsResponse = PostApiFacebookImportsResponses[keyof PostApiFacebookImportsResponses];
+
+export type GetApiFacebookImportsByIdData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/facebook/imports/{id}';
+};
+
+export type GetApiFacebookImportsByIdErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetApiFacebookImportsByIdError = GetApiFacebookImportsByIdErrors[keyof GetApiFacebookImportsByIdErrors];
+
+export type GetApiFacebookImportsByIdResponses = {
+    /**
+     * OK
+     */
+    200: GetImportByIdResponseBody;
+};
+
+export type GetApiFacebookImportsByIdResponse = GetApiFacebookImportsByIdResponses[keyof GetApiFacebookImportsByIdResponses];
 
 export type GetApiFacebookMessagesData = {
     body?: never;

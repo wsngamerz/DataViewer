@@ -334,6 +334,27 @@
         ],
         "type": "object"
       },
+      "GetImportByIDResponseBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/GetImportByIDResponseBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "import": {
+            "$ref": "#/components/schemas/ImportDTO"
+          }
+        },
+        "required": [
+          "import"
+        ],
+        "type": "object"
+      },
       "GetImportsResponseBody": {
         "additionalProperties": false,
         "properties": {
@@ -885,6 +906,44 @@
           }
         },
         "summary": "Post API facebook imports"
+      }
+    },
+    "/api/facebook/imports/{id}": {
+      "get": {
+        "operationId": "get-api-facebook-imports-by-id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetImportByIDResponseBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get API facebook imports by ID"
       }
     },
     "/api/facebook/messages": {

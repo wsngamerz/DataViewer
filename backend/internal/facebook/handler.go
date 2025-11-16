@@ -19,6 +19,7 @@ func NewHandler(g *huma.Group, fuc domain.FacebookUseCase) {
 	}
 
 	huma.Get(g, "/imports", h.getImports)
+	huma.Get(g, "/imports/{id}", h.getImportByID)
 	huma.Post(g, "/imports", h.createImport)
 
 	huma.Get(g, "/accounts", h.getAccounts)
@@ -47,6 +48,28 @@ func (h *handler) getImports(ctx context.Context, _ *struct{}) (*GetImportsRespo
 
 	response := &GetImportsResponse{}
 	response.Body.Imports = imports
+	return response, nil
+}
+
+type GetImportByIDRequest struct {
+	ID string `path:"id" required:"true"`
+}
+
+type GetImportByIDResponse struct {
+	Body struct {
+		Import dtos.ImportDTO `json:"import"`
+	}
+}
+
+func (h *handler) getImportByID(ctx context.Context, input *GetImportByIDRequest) (*GetImportByIDResponse, error) {
+	importData, err := h.facebookUseCase.GetImportByID(ctx, input.ID)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting facebook import by ID")
+		return nil, err
+	}
+
+	response := &GetImportByIDResponse{}
+	response.Body.Import = importData
 	return response, nil
 }
 
