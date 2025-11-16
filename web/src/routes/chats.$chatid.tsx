@@ -47,46 +47,57 @@ function formatCallDuration(seconds: number): string {
 // Helper to highlight @mentions of participants in message content
 function renderContentWithMentions(content: string, participantNames: string[]): React.ReactNode {
     if (!content) return null;
+    // Filter out empty/placeholder names (like '???')
+    const filteredNames = participantNames.filter(n => n && n !== '???');
     // Sort names by length descending to avoid partial matches
-    const sortedNames = [...participantNames].sort((a, b) => b.length - a.length);
+    const sortedNames = [...filteredNames].sort((a, b) => b.length - a.length);
     // Build regex for all names, escaping special regex chars
-    const namePattern = sortedNames.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-    if (!namePattern) return content;
+    const namePattern = sortedNames.map(n => n.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')).join('|');
+    if (!namePattern) {
+        // Just render newlines if no mentions
+        return content.split(/\n/).map((line, i, arr) =>
+            i < arr.length - 1 ? [line, <br key={i} />] : line
+        );
+    }
     // Regex: match @Name (with word boundary or end), case-insensitive
     const mentionRegex = new RegExp(`@(${namePattern})(?=\\b|$)`, 'gi');
-    const parts: React.ReactNode[] = [];
-    let lastIndex = 0;
-    let match: RegExpExecArray | null;
-    while ((match = mentionRegex.exec(content)) !== null) {
-        const [fullMatch, name] = match;
-        // Push text before the match
-        if (match.index > lastIndex) {
-            parts.push(content.slice(lastIndex, match.index));
+    // Split content on newlines, process each line for mentions
+    const lines = content.split(/\n/);
+    const nodes: React.ReactNode[] = [];
+    lines.forEach((line, lineIdx) => {
+        let lastIndex = 0;
+        let match: RegExpExecArray | null;
+        while ((match = mentionRegex.exec(line)) !== null) {
+            const [fullMatch, name] = match;
+            if (match.index > lastIndex) {
+                nodes.push(line.slice(lastIndex, match.index));
+            }
+            nodes.push(
+                <span
+                    key={`mention-${lineIdx}-${match.index}`}
+                    style={{
+                        background: '#ede9fe',
+                        color: '#7c3aed',
+                        borderRadius: 5,
+                        padding: '0 4px',
+                        fontWeight: 600,
+                        display: 'inline-block',
+                    }}
+                    title={`Mention: ${name}`}
+                >
+                    {fullMatch}
+                </span>
+            );
+            lastIndex = match.index + fullMatch.length;
         }
-        // Highlighted mention
-        parts.push(
-            <span
-                key={match.index}
-                style={{
-                    background: '#ede9fe',
-                    color: '#7c3aed',
-                    borderRadius: 5,
-                    padding: '0 4px',
-                    fontWeight: 600,
-                    display: 'inline-block',
-                }}
-                title={`Mention: ${name}`}
-            >
-                {fullMatch}
-            </span>
-        );
-        lastIndex = match.index + fullMatch.length;
-    }
-    // Push remaining text
-    if (lastIndex < content.length) {
-        parts.push(content.slice(lastIndex));
-    }
-    return parts;
+        if (lastIndex < line.length) {
+            nodes.push(line.slice(lastIndex));
+        }
+        if (lineIdx < lines.length - 1) {
+            nodes.push(<br key={`br-${lineIdx}`} />);
+        }
+    });
+    return nodes;
 }
 
 function ChatPage() {
